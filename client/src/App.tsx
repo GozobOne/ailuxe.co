@@ -34,6 +34,8 @@ import AnalyticsDashboardNew from "./pages/AnalyticsDashboardNew";
 import UserGuide from "./pages/UserGuide";
 import SignInPage from "./pages/SignIn";
 import SignUpPage from "./pages/SignUp";
+import TermsOfService from "./pages/Terms";
+import PrivacyPolicy from "./pages/Policy";
 
 function Router() {
   return (
@@ -63,8 +65,9 @@ function Router() {
       <Route path="/roi-guide" component={RoiGuide} />
       <Route path={"/settings"} component={Settings} />
       <Route path={"/account"} component={AccountManagement} />
-      <Route path={"/404"} component={NotFound} />
-      <Route component={NotFound} />
+      <Route path={"/terms"} component={TermsOfService} />
+      <Route path={"/policy"} component={PrivacyPolicy} />
+      <Route path={"/404"} component={NotFound} />      <Route component={NotFound} />
     </Switch>
   );
 }
