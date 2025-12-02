@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS revenue_forecasts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  forecastDate TIMESTAMP NOT NULL,\n  predictedRevenue INT NOT NULL,\n  actualRevenue INT,\n  confidence INT DEFAULT 80,\n  method VARCHAR(50) DEFAULT 'linear_regression',\n  metadata TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_userId (userId),\n  INDEX idx_forecastDate (forecastDate)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2vi6psNnW8WQgE7.root --database myg3CGnPowa4b2r4PdCwpy --execute CREATE TABLE IF NOT EXISTS revenue_forecasts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  forecastDate TIMESTAMP NOT NULL,\n  predictedRevenue INT NOT NULL,\n  actualRevenue INT,\n  confidence INT DEFAULT 80,\n  method VARCHAR(50) DEFAULT 'linear_regression',\n  metadata TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_userId (userId),\n  INDEX idx_forecastDate (forecastDate)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 174
+}

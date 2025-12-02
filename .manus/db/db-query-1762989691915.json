@@ -1,0 +1,9 @@
+{
+  "query": "DROP TABLE IF EXISTS bookings;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2vi6psNnW8WQgE7.root --database myg3CGnPowa4b2r4PdCwpy --execute DROP TABLE IF EXISTS bookings;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1284
+}

@@ -1,0 +1,46 @@
+{
+  "query": "SHOW TABLES",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2vi6psNnW8WQgE7.root --database myg3CGnPowa4b2r4PdCwpy --execute SHOW TABLES",
+  "rows": [
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "billing_plans"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "chatHistories"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "coupons"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "messages"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "models"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "oauth_tokens"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "revenue"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "subscriptions"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "userActivity"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "users"
+    },
+    {
+      "Tables_in_myg3CGnPowa4b2r4PdCwpy": "white_label_settings"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_myg3CGnPowa4b2r4PdCwpy\n__drizzle_migrations\nbilling_plans\nchatHistories\ncoupons\nmessages\nmodels\noauth_tokens\nrevenue\nsubscriptions\nuserActivity\nusers\nwhite_label_settings\n",
+  "stderr": "",
+  "execution_time_ms": 681
+}

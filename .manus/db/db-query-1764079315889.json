@@ -1,0 +1,46 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2vi6psNnW8WQgE7.root --database myg3CGnPowa4b2r4PdCwpy --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()",
+  "rows": [
+    {
+      "TABLE_NAME": "__drizzle_migrations"
+    },
+    {
+      "TABLE_NAME": "users"
+    },
+    {
+      "TABLE_NAME": "chatHistories"
+    },
+    {
+      "TABLE_NAME": "messages"
+    },
+    {
+      "TABLE_NAME": "models"
+    },
+    {
+      "TABLE_NAME": "revenue"
+    },
+    {
+      "TABLE_NAME": "userActivity"
+    },
+    {
+      "TABLE_NAME": "billing_plans"
+    },
+    {
+      "TABLE_NAME": "coupons"
+    },
+    {
+      "TABLE_NAME": "subscriptions"
+    },
+    {
+      "TABLE_NAME": "white_label_settings"
+    },
+    {
+      "TABLE_NAME": "oauth_tokens"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\n__drizzle_migrations\nusers\nchatHistories\nmessages\nmodels\nrevenue\nuserActivity\nbilling_plans\ncoupons\nsubscriptions\nwhite_label_settings\noauth_tokens\n",
+  "stderr": "",
+  "execution_time_ms": 219
+}
