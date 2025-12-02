@@ -10,10 +10,13 @@ export default function SignInPage() {
         <p className="text-gray-600 mt-2">Time is the Real Luxury</p>
       </div>
       <SignIn 
-        routing="path" 
-        path="/sign-in"
-        signUpUrl="/sign-up"
-        afterSignInUrl="/dashboard"
+        appearance={{
+          elements: {
+            rootBox: "mx-auto",
+            card: "shadow-xl"
+          }
+        }}
+        redirectUrl="/dashboard"
       />
     </div>
   );
