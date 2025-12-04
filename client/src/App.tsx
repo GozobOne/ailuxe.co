@@ -1,117 +1,108 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
-import Settings from "@/pages/Settings";
-import AccountManagement from "@/pages/AccountManagement";
-import { Route, Switch } from "wouter";
-import { ClerkProvider } from "@clerk/clerk-react";
-
-// Cache busting version
-const APP_VERSION = "v1000";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-import FeaturesPage from "./pages/FeaturesPage";
-import PersonaManagement from "./pages/PersonaManagement";
-import BotManagement from "./pages/BotManagement";
-import BookingsManagement from "./pages/BookingsManagement";
-import AdminDashboard from "./pages/AdminDashboard";
-import TestingDashboard from "./pages/TestingDashboard";
-import LiveMonitoringPage from "./pages/LiveMonitoringPage";
-import AnalyticsDashboard from "./pages/AnalyticsDashboard";
-import InstagramSetup from "./pages/InstagramSetup";
-import ServiceStatus from "./pages/ServiceStatus";
-import SetupGuide from "./pages/SetupGuide";
-import Welcome from "./pages/Welcome";
-import RoiGuide from "./pages/RoiGuide";
-import ApiSettings from "./pages/ApiSettings";
-import BaileysConnect from "./pages/BaileysConnect";
-import BillingAdmin from "./pages/BillingAdmin";
-import WhiteLabelSettings from "./pages/WhiteLabelSettings";
-import Contacts from "./pages/Contacts";
-import MessageSearch from "./pages/MessageSearch";
-import AnalyticsDashboardNew from "./pages/AnalyticsDashboardNew";
-import UserGuide from "./pages/UserGuide";
-import SignInPage from "./pages/SignIn";
-import SignUpPage from "./pages/SignUp";
-import TermsOfService from "./pages/Terms";
-import PrivacyPolicy from "./pages/Policy";
-import HomeLuxury from "./pages/HomeLuxury";
-import HomeLuxuryTest from "./pages/HomeLuxuryTest";
-import SimpleTest from "./pages/SimpleTest";
-import Onboarding from "./pages/Onboarding";
-import TeamManagement from "./pages/TeamManagement";
-
-function Router() {
+export default function App() {
   return (
-    <Switch>
-      <Route path={"/sign-in"} component={SignInPage} />
-      <Route path={"/sign-up"} component={SignUpPage} />
-      <Route path={"/"} component={SimpleTest} />
-      <Route path={"/test"} component={HomeLuxuryTest} />
-      <Route path={"/home-luxury"} component={HomeLuxury} />
-      <Route path={"/home-old"} component={Home} />
-      <Route path={"/onboarding"} component={Onboarding} />
-      <Route path={"/settings/team"} component={TeamManagement} />
-      <Route path={"/features"} component={FeaturesPage} />
-      <Route path="/persona" component={PersonaManagement} />
-      <Route path="/bot" component={BotManagement} />
-      <Route path="/bookings" component={BookingsManagement} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/api-settings" component={ApiSettings} />
-      <Route path="/baileys-connect" component={BaileysConnect} />
-      <Route path="/admin/billing" component={BillingAdmin} />
-      <Route path="/admin/white-label" component={WhiteLabelSettings} />
-      <Route path="/admin/user-guide" component={UserGuide} />
-      <Route path="/contacts" component={Contacts} />
-      <Route path="/messages/search" component={MessageSearch} />
-      <Route path="/analytics" component={AnalyticsDashboardNew} />
-      <Route path="/test" component={TestingDashboard} />
-      <Route path="/live" component={LiveMonitoringPage} />
-      <Route path="/instagram-setup" component={InstagramSetup} />
-      <Route path="/services" component={ServiceStatus} />
-      <Route path="/setup-guide" component={SetupGuide} />
-      <Route path="/welcome" component={Welcome} />
-      <Route path="/roi-guide" component={RoiGuide} />
-      <Route path={"/settings"} component={Settings} />
-      <Route path={"/account"} component={AccountManagement} />
-      <Route path={"/terms"} component={TermsOfService} />
-      <Route path={"/policy"} component={PrivacyPolicy} />
-      <Route path={"/404"} component={NotFound} />      <Route component={NotFound} />
-    </Switch>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <div style={{ textAlign: 'center', maxWidth: '800px' }}>
+        <h1 style={{
+          fontSize: '72px',
+          fontWeight: '900',
+          color: '#FFFFFF',
+          marginBottom: '20px',
+          letterSpacing: '-2px'
+        }}>
+          AI <span style={{ color: '#D4AF37' }}>LUXE</span>
+        </h1>
+        
+        <p style={{
+          fontSize: '32px',
+          color: '#CCCCCC',
+          marginBottom: '40px',
+          fontWeight: '300'
+        }}>
+          Time is the Real Luxury
+        </p>
+        
+        <div style={{
+          background: 'rgba(212, 175, 55, 0.1)',
+          border: '2px solid #D4AF37',
+          borderRadius: '12px',
+          padding: '30px',
+          marginBottom: '40px'
+        }}>
+          <p style={{
+            fontSize: '20px',
+            color: '#D4AF37',
+            marginBottom: '15px',
+            fontWeight: '600'
+          }}>
+            ✅ Site is LIVE!
+          </p>
+          <p style={{
+            fontSize: '16px',
+            color: '#999999',
+            lineHeight: '1.6'
+          }}>
+            White-label AI concierge platform for luxury event management.
+            <br />
+            Full features coming online shortly.
+          </p>
+        </div>
+        
+        <div style={{
+          display: 'flex',
+          gap: '20px',
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <a 
+            href="/sign-in"
+            style={{
+              background: '#D4AF37',
+              color: '#000000',
+              padding: '16px 40px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontSize: '18px',
+              fontWeight: '600',
+              transition: 'all 0.3s'
+            }}
+          >
+            Sign In
+          </a>
+          
+          <a 
+            href="/sign-up"
+            style={{
+              background: 'transparent',
+              color: '#D4AF37',
+              border: '2px solid #D4AF37',
+              padding: '16px 40px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontSize: '18px',
+              fontWeight: '600',
+              transition: 'all 0.3s'
+            }}
+          >
+            Get Started
+          </a>
+        </div>
+        
+        <p style={{
+          fontSize: '14px',
+          color: '#666666',
+          marginTop: '60px'
+        }}>
+          © 2024 AI LUXE. All rights reserved.
+        </p>
+      </div>
+    </div>
   );
 }
-
-function App() {
-  const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-  // If Clerk key is missing, render without ClerkProvider
-  if (!clerkPubKey) {
-    console.warn("Clerk Publishable Key not found. Authentication features will be disabled.");
-    return (
-      <ErrorBoundary>
-        <ThemeProvider defaultTheme="light">
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </ThemeProvider>
-      </ErrorBoundary>
-    );
-  }
-
-  return (
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <ErrorBoundary>
-        <ThemeProvider defaultTheme="light">
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </ThemeProvider>
-      </ErrorBoundary>
-    </ClerkProvider>
-  );
-}
-
-export default App;
