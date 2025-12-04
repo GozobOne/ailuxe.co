@@ -83,8 +83,19 @@ function Router() {
 function App() {
   const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
+  // If Clerk key is missing, render without ClerkProvider
   if (!clerkPubKey) {
-    throw new Error("Missing Clerk Publishable Key");
+    console.warn("Clerk Publishable Key not found. Authentication features will be disabled.");
+    return (
+      <ErrorBoundary>
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    );
   }
 
   return (
