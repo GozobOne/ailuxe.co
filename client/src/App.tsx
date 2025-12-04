@@ -37,6 +37,7 @@ import SignUpPage from "./pages/SignUp";
 import TermsOfService from "./pages/Terms";
 import PrivacyPolicy from "./pages/Policy";
 import HomeLuxury from "./pages/HomeLuxury";
+import HomeLuxuryTest from "./pages/HomeLuxuryTest";
 import Onboarding from "./pages/Onboarding";
 import TeamManagement from "./pages/TeamManagement";
 
@@ -45,7 +46,8 @@ function Router() {
     <Switch>
       <Route path={"/sign-in"} component={SignInPage} />
       <Route path={"/sign-up"} component={SignUpPage} />
-      <Route path={"/"} component={HomeLuxury} />
+      <Route path={"/"} component={HomeLuxuryTest} />
+      <Route path={"/home-luxury"} component={HomeLuxury} />
       <Route path={"/home-old"} component={Home} />
       <Route path={"/onboarding"} component={Onboarding} />
       <Route path={"/settings/team"} component={TeamManagement} />
