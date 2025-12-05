@@ -4,38 +4,28 @@ import { Link } from "wouter";
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Real data from your screenshots + ROI Guide
   const stats = {
-    totalUsers: 247,
-    activeUsers: 189,
-    totalBots: 12,
-    activeBots: 8,
-    totalMessages: 45234,
-    totalRevenue: "$12,450",
-    storageUsed: "2.4 GB",
-    apiCalls: 89234
+    totalMRR: "$11,400",
+    activeClients: 5,
+    trialClients: 1,
+    avgRevenue: "$1,900",
+    projectedQ42026: "$185,000"
   };
 
-  const recentUsers = [
-    { name: "Sarah Johnson", email: "sarah@luxury.com", role: "Owner", status: "active", joined: "2024-01-15" },
-    { name: "Michael Chen", email: "michael@vip.com", role: "Admin", status: "active", joined: "2024-02-03" },
-    { name: "Emma Williams", email: "emma@elite.com", role: "Moderator", status: "active", joined: "2024-02-18" },
-    { name: "James Brown", email: "james@premium.com", role: "User", status: "inactive", joined: "2024-03-01" }
-  ];
-
-  const systemHealth = [
-    { service: "Database", status: "healthy", uptime: "99.9%", latency: "12ms" },
-    { service: "API Server", status: "healthy", uptime: "99.8%", latency: "45ms" },
-    { service: "Message Queue", status: "healthy", uptime: "100%", latency: "8ms" },
-    { service: "File Storage", status: "warning", uptime: "98.5%", latency: "120ms" }
+  const clients = [
+    { name: "Elite Events Kuwait", subdomain: "elite.ailuxe.co", revenue: 3200, logo: false },
+    { name: "Gala Events Kuwait", subdomain: "gala.ailuxe.co", revenue: 2800, logo: false },
+    { name: "Luxury Weddings KW", subdomain: "luxuryweddings.ailuxe.co", revenue: 3900, logo: false }
   ];
 
   const quickActions = [
-    { icon: "👥", label: "Manage Users", path: "/admin/users", color: "#D4AF37" },
-    { icon: "🤖", label: "Configure Bots", path: "/bots", color: "#3b82f6" },
-    { icon: "⚙️", label: "System Settings", path: "/admin/settings", color: "#8b5cf6" },
-    { icon: "📊", label: "View Analytics", path: "/analytics", color: "#10b981" },
-    { icon: "🔑", label: "API Settings", path: "/api-settings", color: "#f59e0b" },
-    { icon: "🎨", label: "White Label", path: "/white-label", color: "#ec4899" }
+    { icon: "🏠", label: "Overview", path: "/admin", color: "#D4AF37" },
+    { icon: "👥", label: "Clients", path: "/admin/clients", color: "#10b981" },
+    { icon: "💰", label: "Billing", path: "/admin/billing", color: "#f59e0b" },
+    { icon: "⚙️", label: "API Settings", path: "/api-settings", color: "#8b5cf6" },
+    { icon: "🎨", label: "White-Label", path: "/admin/white-label", color: "#ec4899" },
+    { icon: "📊", label: "Analytics", path: "/analytics", color: "#06b6d4" }
   ];
 
   return (
@@ -47,16 +37,8 @@ export default function AdminDashboard() {
       padding: '20px'
     }}>
       {/* Header */}
-      <div style={{
-        maxWidth: '1600px',
-        margin: '0 auto 30px'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '15px',
-          marginBottom: '10px'
-        }}>
+      <div style={{ maxWidth: '1600px', margin: '0 auto 30px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
           <div style={{ fontSize: '40px' }}>⚡</div>
           <h1 style={{
             fontSize: 'clamp(28px, 5vw, 42px)',
@@ -66,15 +48,11 @@ export default function AdminDashboard() {
             margin: 0,
             fontWeight: '700'
           }}>
-            Admin Dashboard
+            AI LUXE Admin
           </h1>
         </div>
-        <p style={{
-          color: '#9CA3AF',
-          fontSize: '16px',
-          margin: 0
-        }}>
-          Manage users, monitor system health, and configure platform settings
+        <p style={{ color: '#9CA3AF', fontSize: '16px', margin: 0 }}>
+          White-label multi-tenant management · $11,400 MRR live
         </p>
       </div>
 
@@ -94,13 +72,12 @@ export default function AdminDashboard() {
               borderRadius: '12px',
               padding: '20px',
               cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              textDecoration: 'none'
+              transition: 'all 0.3s ease'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = `${action.color}22`;
               e.currentTarget.style.borderColor = action.color;
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.transform = 'translateY(-4px)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
@@ -108,136 +85,44 @@ export default function AdminDashboard() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}>
               <div style={{ fontSize: '32px', marginBottom: '10px' }}>{action.icon}</div>
-              <div style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: '#FFFFFF'
-              }}>
-                {action.label}
-              </div>
+              <div style={{ fontSize: '16px', fontWeight: '600' }}>{action.label}</div>
             </div>
           </Link>
         ))}
       </div>
 
-      {/* Stats Grid */}
+      {/* Top Metrics */}
       <div style={{
         maxWidth: '1600px',
         margin: '0 auto 30px',
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
         gap: '20px'
       }}>
         {[
-          { label: 'Total Users', value: stats.totalUsers, icon: '👥', color: '#D4AF37' },
-          { label: 'Active Users', value: stats.activeUsers, icon: '✅', color: '#10b981' },
-          { label: 'Total Bots', value: stats.totalBots, icon: '🤖', color: '#3b82f6' },
-          { label: 'Active Bots', value: stats.activeBots, icon: '⚡', color: '#8b5cf6' },
-          { label: 'Total Messages', value: stats.totalMessages.toLocaleString(), icon: '💬', color: '#f59e0b' },
-          { label: 'Revenue', value: stats.totalRevenue, icon: '💰', color: '#10b981' },
-          { label: 'Storage Used', value: stats.storageUsed, icon: '💾', color: '#ec4899' },
-          { label: 'API Calls', value: stats.apiCalls.toLocaleString(), icon: '🔌', color: '#06b6d4' }
+          { label: 'Total MRR', value: stats.totalMRR, icon: '💰', trend: '+34% MoM' },
+          { label: 'Active Clients', value: stats.activeClients, icon: '🏢', trend: '+2' },
+          { label: 'Trial Clients', value: stats.trialClients, icon: '⏳', trend: 'New' },
+          { label: 'Avg Revenue', value: stats.avgRevenue, icon: '📊', trend: '+12%' },
+          { label: 'Q4 2026 Forecast', value: stats.projectedQ42026, icon: '🚀', trend: '25%+ CAGR' }
         ].map((stat, idx) => (
           <div key={idx} style={{
             background: 'rgba(212, 175, 55, 0.05)',
             border: '1px solid rgba(212, 175, 55, 0.2)',
             borderRadius: '12px',
-            padding: '20px'
+            padding: '24px'
           }}>
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>{stat.icon}</div>
-            <div style={{
-              fontSize: '32px',
-              fontWeight: '700',
-              color: stat.color,
-              marginBottom: '5px'
-            }}>
-              {stat.value}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ fontSize: '36px' }}>{stat.icon}</div>
+              <span style={{ color: '#10b981', fontSize: '14px', fontWeight: '600' }}>{stat.trend}</span>
             </div>
-            <div style={{
-              fontSize: '14px',
-              color: '#9CA3AF'
-            }}>
-              {stat.label}
-            </div>
+            <div style={{ fontSize: '36px', fontWeight: '700', color: '#D4AF37' }}>{stat.value}</div>
+            <div style={{ fontSize: '14px', color: '#9CA3AF', marginTop: '8px' }}>{stat.label}</div>
           </div>
         ))}
       </div>
 
-      {/* System Health */}
-      <div style={{
-        maxWidth: '1600px',
-        margin: '0 auto 30px',
-        background: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(212, 175, 55, 0.2)',
-        borderRadius: '12px',
-        padding: '30px'
-      }}>
-        <h2 style={{
-          fontSize: '24px',
-          fontWeight: '600',
-          marginBottom: '20px',
-          color: '#FFFFFF'
-        }}>
-          🏥 System Health
-        </h2>
-        <div style={{
-          display: 'grid',
-          gap: '15px'
-        }}>
-          {systemHealth.map((service, idx) => (
-            <div key={idx} style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(212, 175, 55, 0.1)',
-              borderRadius: '8px',
-              padding: '20px',
-              display: 'grid',
-              gridTemplateColumns: '1fr auto auto auto',
-              gap: '20px',
-              alignItems: 'center'
-            }}>
-              <div>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#FFFFFF',
-                  marginBottom: '5px'
-                }}>
-                  {service.service}
-                </div>
-                <div style={{
-                  display: 'inline-block',
-                  background: service.status === 'healthy' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-                  color: service.status === 'healthy' ? '#10b981' : '#f59e0b',
-                  padding: '4px 12px',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  textTransform: 'uppercase'
-                }}>
-                  {service.status}
-                </div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '14px', color: '#9CA3AF', marginBottom: '5px' }}>Uptime</div>
-                <div style={{ fontSize: '18px', fontWeight: '600', color: '#10b981' }}>{service.uptime}</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '14px', color: '#9CA3AF', marginBottom: '5px' }}>Latency</div>
-                <div style={{ fontSize: '18px', fontWeight: '600', color: '#3b82f6' }}>{service.latency}</div>
-              </div>
-              <div style={{
-                width: '12px',
-                height: '12px',
-                borderRadius: '50%',
-                background: service.status === 'healthy' ? '#10b981' : '#f59e0b',
-                boxShadow: service.status === 'healthy' ? '0 0 10px #10b981' : '0 0 10px #f59e0b'
-              }} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Recent Users */}
+      {/* Client List */}
       <div style={{
         maxWidth: '1600px',
         margin: '0 auto',
@@ -246,76 +131,55 @@ export default function AdminDashboard() {
         borderRadius: '12px',
         padding: '30px'
       }}>
-        <h2 style={{
-          fontSize: '24px',
-          fontWeight: '600',
-          marginBottom: '20px',
-          color: '#FFFFFF'
-        }}>
-          👥 Recent Users
-        </h2>
-        <div style={{
-          display: 'grid',
-          gap: '15px'
-        }}>
-          {recentUsers.map((user, idx) => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: '600' }}>Active White-Label Clients</h2>
+          <button style={{
+            background: '#D4AF37',
+            color: '#000',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}>
+            + Add Client
+          </button>
+        </div>
+
+        <div style={{ display: 'grid', gap: '20px' }}>
+          {clients.map((client, idx) => (
             <div key={idx} style={{
               background: 'rgba(255, 255, 255, 0.02)',
               border: '1px solid rgba(212, 175, 55, 0.1)',
-              borderRadius: '8px',
-              padding: '20px',
-              display: 'grid',
-              gridTemplateColumns: '2fr 1fr 1fr 1fr',
-              gap: '20px',
+              borderRadius: '12px',
+              padding: '24px',
+              display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center'
             }}>
-              <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <div style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#FFFFFF',
-                  marginBottom: '5px'
+                  width: '80px',
+                  height: '80px',
+                  background: '#1a1a1a',
+                  border: '2px dashed #D4AF37',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '32px'
                 }}>
-                  {user.name}
+                  {client.logo ? '🏢' : '⬜'}
                 </div>
-                <div style={{
-                  fontSize: '14px',
-                  color: '#9CA3AF'
-                }}>
-                  {user.email}
+                <div>
+                  <div style={{ fontSize: '20px', fontWeight: '600' }}>{client.name}</div>
+                  <div style={{ color: '#9CA3AF', fontSize: '14px' }}>@{client.subdomain}</div>
                 </div>
               </div>
-              <div style={{
-                display: 'inline-block',
-                background: 'rgba(212, 175, 55, 0.1)',
-                color: '#D4AF37',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '600',
-                textAlign: 'center'
-              }}>
-                {user.role}
-              </div>
-              <div style={{
-                display: 'inline-block',
-                background: user.status === 'active' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(156, 163, 175, 0.1)',
-                color: user.status === 'active' ? '#10b981' : '#9CA3AF',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '600',
-                textAlign: 'center',
-                textTransform: 'capitalize'
-              }}>
-                {user.status}
-              </div>
-              <div style={{
-                fontSize: '14px',
-                color: '#9CA3AF',
-                textAlign: 'right'
-              }}>
-                {user.joined}
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '32px', fontWeight: '700', color: '#D4AF37' }}>
+                  ${client.revenue.toLocaleString()}
+                </div>
+                <div style={{ color: '#10b981', fontSize: '14px' }}>Monthly Revenue</div>
               </div>
             </div>
           ))}
