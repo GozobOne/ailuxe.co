@@ -1,6 +1,41 @@
 import { Route, Switch } from "wouter";
 import { ClerkProvider, SignIn, SignUp, useAuth } from "@clerk/clerk-react";
+
+// Pages
 import Home from "./pages/Home";
+import AdminDashboard from "./pages/AdminDashboard";
+import PersonaManagement from "./pages/PersonaManagement";
+import BotManagement from "./pages/BotManagement";
+import ApiSettings from "./pages/ApiSettings";
+import TeamManagement from "./pages/TeamManagement";
+import WhiteLabelSettings from "./pages/WhiteLabelSettings";
+import MessageSearch from "./pages/MessageSearch";
+import ConversationView from "./pages/ConversationView";
+import BookingsManagement from "./pages/BookingsManagement";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import NotificationSettings from "./pages/NotificationSettings";
+import Integrations from "./pages/Integrations";
+import Workflows from "./pages/Workflows";
+import Templates from "./pages/Templates";
+import KnowledgeBase from "./pages/KnowledgeBase";
+import Help from "./pages/Help";
+import Support from "./pages/Support";
+import Demo from "./pages/Demo";
+import Playground from "./pages/Playground";
+import Tutorial from "./pages/Tutorial";
+import GettingStarted from "./pages/GettingStarted";
+import AITraining from "./pages/AITraining";
+import VoiceSettings from "./pages/VoiceSettings";
+import QRCodes from "./pages/QRCodes";
+import Pricing from "./pages/Pricing";
+
+// Enhanced pages
+import Onboarding from "./pages/Onboarding";
+import Terms from "./pages/Terms";
+import Policy from "./pages/Policy";
+import Dashboard from "./pages/Dashboard";
 
 function HomePage() {
   return <Home />;
@@ -46,92 +81,47 @@ function SignUpPage() {
   );
 }
 
-function DashboardPage() {
-  const { user } = useAuth();
-  
+function NotFoundPage() {
   return (
     <div style={{
       minHeight: '100vh',
       background: '#000000',
-      padding: '40px 20px',
-      fontFamily: 'system-ui, -apple-system, sans-serif'
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      padding: '20px',
+      textAlign: 'center'
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{
-          fontSize: 'clamp(32px, 5vw, 48px)',
-          color: '#FFFFFF',
-          marginBottom: '20px'
-        }}>
-          Welcome, {user?.firstName || 'User'}!
-        </h1>
-        <p style={{
-          fontSize: 'clamp(16px, 2.5vw, 20px)',
-          color: '#999999',
-          marginBottom: '40px'
-        }}>
-          Your AI LUXE dashboard is being prepared...
-        </p>
-        
-        <div style={{
-          background: 'rgba(212, 175, 55, 0.1)',
-          border: '2px solid #D4AF37',
-          borderRadius: '12px',
-          padding: 'clamp(20px, 3vw, 30px)'
-        }}>
-          <p style={{ color: '#D4AF37', fontSize: '18px', marginBottom: '10px' }}>
-            🎉 Authentication Successful!
-          </p>
-          <p style={{ color: '#999999', fontSize: '16px' }}>
-            Full dashboard features coming soon.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function OnboardingPage() {
-  const { user } = useAuth();
-  
-  return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#000000',
-      padding: '40px 20px',
-      fontFamily: 'system-ui, -apple-system, sans-serif'
-    }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-        <h1 style={{
-          fontSize: 'clamp(32px, 5vw, 48px)',
-          color: '#FFFFFF',
-          marginBottom: '20px'
-        }}>
-          Welcome to AI <span style={{ color: '#D4AF37' }}>LUXE</span>
-        </h1>
-        <p style={{
-          fontSize: 'clamp(16px, 2.5vw, 20px)',
-          color: '#999999',
-          marginBottom: '40px'
-        }}>
-          Let's get you started, {user?.firstName}!
-        </p>
-        
-        <a 
-          href="/dashboard"
-          style={{
-            background: '#D4AF37',
-            color: '#000000',
-            padding: '16px 40px',
-            borderRadius: '8px',
-            textDecoration: 'none',
-            fontSize: '18px',
-            fontWeight: '600',
-            display: 'inline-block'
-          }}
-        >
-          Go to Dashboard
-        </a>
-      </div>
+      <h1 style={{
+        fontSize: 'clamp(48px, 10vw, 96px)',
+        color: '#D4AF37',
+        marginBottom: '20px'
+      }}>
+        404
+      </h1>
+      <p style={{
+        fontSize: 'clamp(18px, 3vw, 24px)',
+        marginBottom: '30px'
+      }}>
+        Page Not Found
+      </p>
+      <a 
+        href="/"
+        style={{
+          background: '#D4AF37',
+          color: '#000000',
+          padding: '12px 30px',
+          borderRadius: '8px',
+          textDecoration: 'none',
+          fontSize: '16px',
+          fontWeight: '600'
+        }}
+      >
+        Go Home
+      </a>
     </div>
   );
 }
@@ -139,24 +129,63 @@ function OnboardingPage() {
 function Router() {
   return (
     <Switch>
+      {/* Public Pages */}
       <Route path="/" component={HomePage} />
       <Route path="/sign-in" component={SignInPage} />
       <Route path="/sign-up" component={SignUpPage} />
-      <Route path="/dashboard" component={DashboardPage} />
-      <Route path="/onboarding" component={OnboardingPage} />
-      <Route>
-        <div style={{
-          minHeight: '100vh',
-          background: '#000000',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#FFFFFF',
-          fontSize: '24px'
-        }}>
-          404 - Page Not Found
-        </div>
-      </Route>
+      <Route path="/sign-in/sso-callback" component={SignInPage} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/policy" component={Policy} />
+      <Route path="/help" component={Help} />
+      <Route path="/support" component={Support} />
+      
+      {/* User Pages */}
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/notifications" component={NotificationSettings} />
+      
+      {/* Admin & Management */}
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/personas" component={PersonaManagement} />
+      <Route path="/bot" component={BotManagement} />
+      <Route path="/api-settings" component={ApiSettings} />
+      <Route path="/team" component={TeamManagement} />
+      <Route path="/white-label" component={WhiteLabelSettings} />
+      
+      {/* Messaging & Communication */}
+      <Route path="/messages" component={MessageSearch} />
+      <Route path="/conversations" component={ConversationView} />
+      
+      {/* Bookings & Events */}
+      <Route path="/bookings" component={BookingsManagement} />
+      
+      {/* Analytics & Insights */}
+      <Route path="/analytics" component={AnalyticsDashboard} />
+      
+      {/* Integrations & Workflows */}
+      <Route path="/integrations" component={Integrations} />
+      <Route path="/workflows" component={Workflows} />
+      <Route path="/templates" component={Templates} />
+      
+      {/* Knowledge & Learning */}
+      <Route path="/knowledge-base" component={KnowledgeBase} />
+      <Route path="/tutorial" component={Tutorial} />
+      <Route path="/getting-started" component={GettingStarted} />
+      
+      {/* Demo & Testing */}
+      <Route path="/demo" component={Demo} />
+      <Route path="/playground" component={Playground} />
+      
+      {/* Advanced Features */}
+      <Route path="/ai-training" component={AITraining} />
+      <Route path="/voice-settings" component={VoiceSettings} />
+      <Route path="/qr-codes" component={QRCodes} />
+      
+      {/* 404 */}
+      <Route component={NotFoundPage} />
     </Switch>
   );
 }
