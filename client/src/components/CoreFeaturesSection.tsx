@@ -48,6 +48,7 @@ const CORE_FEATURES: Array<{
     color: "text-amber-600",
     bgColor: "bg-amber-50",
     route: "/bookings",
+    image: "/images/hero-dashboard.png",
   },
   {
     icon: Scale,
@@ -55,7 +56,8 @@ const CORE_FEATURES: Array<{
     description: "AI handles price negotiations intelligently, escalating to you only when budgets exceed your thresholds.",
     color: "text-rose-600",
     bgColor: "bg-rose-50",
-    route: "/test",
+    route: "/admin",
+    image: "/images/onboarding-ai-scan.png",
   },
   {
     icon: Link2,
@@ -64,6 +66,7 @@ const CORE_FEATURES: Array<{
     color: "text-indigo-600",
     bgColor: "bg-indigo-50",
     route: "/admin/api-settings",
+    image: "/images/feature-multi-platform.png",
   },
 ];
 

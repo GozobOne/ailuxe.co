@@ -1,0 +1,19 @@
+# AI LUXE Environment Configuration
+
+# Clerk Authentication
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_Y2hhbXBpb24tbWl0ZS01NS5jbGVyay5hY2NvdW50cy5kZXYk
+CLERK_SECRET_KEY=sk_test_ZMOQJyhdI2EANnFC7sWk7JmY5Q4gy0K0wlgaCW960Q
+
+# App Configuration
+VITE_APP_TITLE=AI LUXE - Time is the Real Luxury
+VITE_APP_LOGO=/favicon.ico
+VITE_ANALYTICS_ENDPOINT=
+VITE_ANALYTICS_WEBSITE_ID=
+NODE_ENV=development
+
+# Supabase Configuration
+VITE_SUPABASE_URL=https://vbbtdefkvcanntlbudbb.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiYnRkZWZrdmNhbm50bGJ1ZGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMzMjcxNTksImV4cCI6MjA0ODkwMzE1OX0.qYqGzKpLJHCxQqFYOLwEWPxJEJxLwPDwHPKQzJJJJJJ
+
+# Database Configuration (PostgreSQL via Supabase)
+DATABASE_URL=postgresql://postgres.vbbtdefkvcanntlbudbb:AILuxe2024!@aws-0-us-east-1.pooler.supabase.com:6543/postgres

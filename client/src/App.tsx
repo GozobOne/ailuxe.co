@@ -12,6 +12,7 @@ const ApiSettings = lazy(() => import("./pages/ApiSettings"));
 const TeamManagement = lazy(() => import("./pages/TeamManagement"));
 const WhiteLabelSettings = lazy(() => import("./pages/WhiteLabelSettings"));
 const MessageSearch = lazy(() => import("./pages/MessageSearch"));
+const Messages = lazy(() => import("./pages/Messages"));
 const ConversationView = lazy(() => import("./pages/ConversationView"));
 const BookingsManagement = lazy(() => import("./pages/BookingsManagement"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
@@ -78,7 +79,16 @@ function SignInPage() {
       justifyContent: 'center',
       padding: '20px'
     }}>
-      <SignIn routing="path" path="/sign-in" />
+      <SignIn 
+        routing="path" 
+        path="/sign-in"
+        appearance={{
+          elements: {
+            rootBox: "mx-auto",
+            card: "bg-black border border-luxury/30",
+          },
+        }}
+      />
     </div>
   );
 }
@@ -93,7 +103,16 @@ function SignUpPage() {
       justifyContent: 'center',
       padding: '20px'
     }}>
-      <SignUp routing="path" path="/sign-up" />
+      <SignUp 
+        routing="path" 
+        path="/sign-up"
+        appearance={{
+          elements: {
+            rootBox: "mx-auto",
+            card: "bg-black border border-luxury/30",
+          },
+        }}
+      />
     </div>
   );
 }
@@ -170,7 +189,7 @@ function Router() {
           <Route path="/voice-settings" component={VoiceSettings} />
           
           {/* Communication */}
-          <Route path="/messages" component={MessageSearch} />
+          <Route path="/messages" component={Messages} />
           <Route path="/messages/search" component={MessageSearch} />
           <Route path="/conversation/:id" component={ConversationView} />
           <Route path="/contacts" component={Contacts} />

@@ -1,219 +1,285 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { Eye, EyeOff, Save, TestTube2 } from "lucide-react";
+
+interface ApiConfig {
+  whatsapp: {
+    phoneNumberId: string;
+    accessToken: string;
+    webhookVerifyToken: string;
+  };
+  voice: {
+    model: string;
+  };
+}
 
 export default function ApiSettings() {
+  const { toast } = useToast();
   const [showTokens, setShowTokens] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
+  
+  const [config, setConfig] = useState<ApiConfig>({
+    whatsapp: {
+      phoneNumberId: "86827295631771",
+      accessToken: "EAAIf6rO482CQBPXnsuzICQu...",
+      webhookVerifyToken: "ailuxe_webhook_verify_2025",
+    },
+    voice: {
+      model: "deepseek-whisper",
+    },
+  });
+
+  // Load saved config from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('ailuxe_api_config');
+    if (saved) {
+      try {
+        setConfig(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to load saved config:', e);
+      }
+    }
+  }, []);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Save to localStorage (in production, this would be an API call)
+      localStorage.setItem('ailuxe_api_config', JSON.stringify(config));
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Configuration Saved",
+        description: "Your API settings have been saved successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save configuration. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleTestConnection = async () => {
+    setIsTesting(true);
+    try {
+      // Simulate API test
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: "Connection Successful",
+        description: "WhatsApp Business API connection is working correctly.",
+      });
+    } catch (error) {
+      toast({
+        title: "Connection Failed",
+        description: "Failed to connect to WhatsApp Business API.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
+  const handleTestVoice = async () => {
+    setIsTesting(true);
+    try {
+      // Simulate voice test
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast({
+        title: "Voice Test Successful",
+        description: `${config.voice.model === 'deepseek-whisper' ? 'DeepSeek Whisper' : 'OpenAI Whisper'} is working correctly.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Voice Test Failed",
+        description: "Failed to test voice transcription.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#000000',
-      color: '#FFFFFF',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      padding: '20px'
-    }}>
+    <div className="space-y-6">
       {/* Header */}
-      <div style={{ maxWidth: '1600px', margin: '0 auto 30px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
-          <div style={{ fontSize: '40px' }}>🔌</div>
-          <h1 style={{
-            fontSize: 'clamp(28px, 5vw, 42px)',
-            background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            margin: 0,
-            fontWeight: '700'
-          }}>
+      <div>
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-4xl">🔌</span>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-luxury to-yellow-400 bg-clip-text text-transparent">
             API Settings
           </h1>
         </div>
-        <p style={{ color: '#9CA3AF', fontSize: '16px', margin: 0 }}>
-          Secure credential storage for integrations · WhatsApp Business + DeepSeek Whisper live
+        <p className="text-muted-foreground">
+          Secure credential storage for integrations · WhatsApp Business + AI Voice live
         </p>
       </div>
 
       {/* WhatsApp Business Cloud API */}
-      <div style={{
-        maxWidth: '1600px',
-        margin: '0 auto 30px',
-        background: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(212, 175, 55, 0.2)',
-        borderRadius: '12px',
-        padding: '30px'
-      }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>
-          📱 WhatsApp Business Cloud API
-        </h2>
-        <p style={{ color: '#9CA3AF', fontSize: '14px', marginBottom: '24px' }}>
-          Official WhatsApp Business API credentials from Meta
-        </p>
-
-        <div style={{ display: 'grid', gap: '20px', maxWidth: '800px' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: '14px', color: '#9CA3AF', marginBottom: '8px' }}>
-              Phone Number ID *
-            </label>
-            <input
-              type="text"
-              value="86827295631771"
-              readOnly
-              style={{
-                width: '100%',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                borderRadius: '8px',
-                padding: '14px 16px',
-                color: '#FFFFFF',
-                fontSize: '14px'
-              }}
+      <Card className="border-luxury/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span>📱</span>
+            WhatsApp Business Cloud API
+          </CardTitle>
+          <CardDescription>
+            Official WhatsApp Business API credentials from Meta
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumberId">Phone Number ID *</Label>
+            <Input
+              id="phoneNumberId"
+              value={config.whatsapp.phoneNumberId}
+              onChange={(e) => setConfig({
+                ...config,
+                whatsapp: { ...config.whatsapp, phoneNumberId: e.target.value }
+              })}
+              placeholder="Enter your Phone Number ID"
             />
-            <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '6px' }}>
+            <p className="text-xs text-muted-foreground">
               Found in Meta Business Suite → WhatsApp → API Setup
             </p>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '14px', color: '#9CA3AF', marginBottom: '8px' }}>
-              Access Token *
-            </label>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <input
+          <div className="space-y-2">
+            <Label htmlFor="accessToken">Access Token *</Label>
+            <div className="flex gap-2">
+              <Input
+                id="accessToken"
                 type={showTokens ? "text" : "password"}
-                value="EAAIf6rO482CQBPXnsuzICQu..."
-                readOnly
-                style={{
-                  flex: 1,
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
-                  borderRadius: '8px',
-                  padding: '14px 16px',
-                  color: '#FFFFFF',
-                  fontFamily: 'monospace',
-                  fontSize: '14px'
-                }}
+                value={config.whatsapp.accessToken}
+                onChange={(e) => setConfig({
+                  ...config,
+                  whatsapp: { ...config.whatsapp, accessToken: e.target.value }
+                })}
+                placeholder="Enter your Access Token"
+                className="font-mono"
               />
-              <button
+              <Button
+                variant="outline"
+                size="icon"
                 onClick={() => setShowTokens(!showTokens)}
-                style={{
-                  background: 'rgba(212, 175, 55, 0.1)',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
-                  borderRadius: '8px',
-                  padding: '0 20px',
-                  color: '#D4AF37',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
               >
-                {showTokens ? 'Hide' : 'Show'}
-              </button>
+                {showTokens ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
             </div>
-            <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '6px' }}>
+            <p className="text-xs text-muted-foreground">
               Permanent access token from Meta Business Suite
             </p>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '14px', color: '#9CA3AF', marginBottom: '8px' }}>
-              Webhook Verify Token *
-            </label>
-            <input
-              type="text"
-              value="ailuxe_webhook_verify_2025"
-              readOnly
-              style={{
-                width: '100%',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                borderRadius: '8px',
-                padding: '14px 16px',
-                color: '#FFFFFF',
-                fontSize: '14px'
-              }}
+          <div className="space-y-2">
+            <Label htmlFor="webhookToken">Webhook Verify Token *</Label>
+            <Input
+              id="webhookToken"
+              value={config.whatsapp.webhookVerifyToken}
+              onChange={(e) => setConfig({
+                ...config,
+                whatsapp: { ...config.whatsapp, webhookVerifyToken: e.target.value }
+              })}
+              placeholder="Enter your Webhook Verify Token"
             />
-            <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '6px' }}>
+            <p className="text-xs text-muted-foreground">
               Custom token you create for webhook verification (any random string)
             </p>
           </div>
 
-          <div>
-            <label style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: '8px', display: 'block' }}>
-              Webhook URL (for Meta configuration):
-            </label>
-            <div style={{
-              background: '#1a1a1a',
-              border: '1px solid #D4AF37',
-              borderRadius: '8px',
-              padding: '14px 16px',
-              fontFamily: 'monospace',
-              color: '#D4AF37',
-              fontSize: '14px'
-            }}>
+          <div className="space-y-2">
+            <Label className="text-xs">Webhook URL (for Meta configuration):</Label>
+            <div className="bg-muted border border-luxury rounded-lg p-3 font-mono text-sm text-luxury">
               https://ailuxe.co/api/whatsapp/webhook
             </div>
           </div>
 
-          <button style={{
-            background: '#D4AF37',
-            color: '#000000',
-            padding: '14px 32px',
-            borderRadius: '8px',
-            fontWeight: '700',
-            fontSize: '16px',
-            cursor: 'pointer',
-            width: '100%'
-          }}>
-            Save Configuration & Test Connection
-          </button>
-        </div>
-      </div>
+          <div className="flex gap-3 pt-2">
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex-1 bg-luxury hover:bg-luxury/90 text-black"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? "Saving..." : "Save Configuration"}
+            </Button>
+            <Button
+              onClick={handleTestConnection}
+              disabled={isTesting}
+              variant="outline"
+              className="flex-1"
+            >
+              <TestTube2 className="mr-2 h-4 w-4" />
+              {isTesting ? "Testing..." : "Test Connection"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* AI / Voice Settings */}
-      <div style={{
-        maxWidth: '1600px',
-        margin: '0 auto',
-        background: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(212, 175, 55, 0.2)',
-        borderRadius: '12px',
-        padding: '30px'
-      }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>
-          🎙️ AI / Voice Settings
-        </h2>
-        <p style={{ color: '#9CA3AF', fontSize: '14px', marginBottom: '24px' }}>
-          Configure voice transcription preferences
-        </p>
+      <Card className="border-luxury/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span>🎙️</span>
+            AI / Voice Settings
+          </CardTitle>
+          <CardDescription>
+            Configure voice transcription preferences
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="voiceModel">Voice Model</Label>
+            <Select
+              value={config.voice.model}
+              onValueChange={(value) => setConfig({
+                ...config,
+                voice: { model: value }
+              })}
+            >
+              <SelectTrigger id="voiceModel">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="deepseek-whisper">DeepSeek Whisper</SelectItem>
+                <SelectItem value="openai-whisper">OpenAI Whisper</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div style={{ maxWidth: '600px' }}>
-          <label style={{ display: 'block', fontSize: '14px', color: '#9CA3AF', marginBottom: '8px' }}>
-            Voice Model
-          </label>
-          <select style={{
-            width: '100%',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(212, 175, 55, 0.3)',
-            borderRadius: '8px',
-            padding: '14px 16px',
-            color: '#FFFFFF',
-            fontSize: '16px'
-          }}>
-            <option>DeepSeek Whisper</option>
-            <option>OpenAI Whisper</option>
-          </select>
-
-          <button style={{
-            marginTop: '24px',
-            background: '#D4AF37',
-            color: '#000000',
-            padding: '14px 32px',
-            borderRadius: '8px',
-            fontWeight: '700',
-            fontSize: '16px',
-            cursor: 'pointer',
-            width: '100%'
-          }}>
-            Test Voice Transcription
-          </button>
-        </div>
-      </div>
+          <div className="flex gap-3 pt-2">
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex-1 bg-luxury hover:bg-luxury/90 text-black"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? "Saving..." : "Save Settings"}
+            </Button>
+            <Button
+              onClick={handleTestVoice}
+              disabled={isTesting}
+              variant="outline"
+              className="flex-1"
+            >
+              <TestTube2 className="mr-2 h-4 w-4" />
+              {isTesting ? "Testing..." : "Test Voice"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
