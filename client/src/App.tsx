@@ -36,6 +36,11 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Policy = lazy(() => import("./pages/Policy"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Contacts = lazy(() => import("./pages/Contacts"));
+const GlobalSearch = lazy(() => import("./pages/GlobalSearch"));
+const ROIGuide = lazy(() => import("./pages/ROIGuide"));
+const AccountManagement = lazy(() => import("./pages/AccountManagement"));
+const TestingDashboard = lazy(() => import("./pages/TestingDashboard"));
 
 // Loading component
 function LoadingScreen() {
@@ -166,12 +171,18 @@ function Router() {
           
           {/* Communication */}
           <Route path="/messages" component={MessageSearch} />
+          <Route path="/messages/search" component={MessageSearch} />
           <Route path="/conversation/:id" component={ConversationView} />
+          <Route path="/contacts" component={Contacts} />
           
           {/* Business Tools */}
           <Route path="/bookings" component={BookingsManagement} />
           <Route path="/analytics" component={AnalyticsDashboard} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/search" component={GlobalSearch} />
+          <Route path="/roi-guide" component={ROIGuide} />
+          <Route path="/account" component={AccountManagement} />
+          <Route path="/test" component={TestingDashboard} />
           
           {/* Integration & Automation */}
           <Route path="/integrations" component={Integrations} />
