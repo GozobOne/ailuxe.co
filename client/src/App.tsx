@@ -1,5 +1,6 @@
 import { Route, Switch } from "wouter";
 import { ClerkProvider, SignIn, SignUp, useAuth } from "@clerk/clerk-react";
+import Navigation from "./components/Navigation";
 
 // Pages
 import Home from "./pages/Home";
@@ -128,7 +129,9 @@ function NotFoundPage() {
 
 function Router() {
   return (
-    <Switch>
+    <>
+      <Navigation />
+      <Switch>
       {/* Public Pages */}
       <Route path="/" component={HomePage} />
       <Route path="/sign-in" component={SignInPage} />
@@ -186,7 +189,8 @@ function Router() {
       
       {/* 404 */}
       <Route component={NotFoundPage} />
-    </Switch>
+      </Switch>
+    </>
   );
 }
 

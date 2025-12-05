@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 export default function LuxuryHomepage() {
@@ -65,7 +66,10 @@ export default function LuxuryHomepage() {
       color: '#FFFFFF'
     }}>
       {/* Hero Section */}
-      <section
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
         style={{
           minHeight: '100vh',
           display: 'flex',
@@ -78,10 +82,12 @@ export default function LuxuryHomepage() {
         }}
       >
         {/* Animated background elements */}
-        <div
+        <motion.div
+          animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3]
           }}
+          transition={{
             duration: 4,
             repeat: Infinity,
             ease: "easeInOut"
@@ -98,7 +104,10 @@ export default function LuxuryHomepage() {
         />
         
         <div style={{ textAlign: 'center', maxWidth: '1000px', position: 'relative', zIndex: 1 }}>
-          <h1
+          <motion.h1
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             style={{
               fontSize: 'clamp(48px, 8vw, 96px)',
               fontWeight: '900',
@@ -108,9 +117,12 @@ export default function LuxuryHomepage() {
             }}
           >
             AI <span style={{ color: '#D4AF37' }}>LUXE</span>
-          </h1>
+          </motion.h1>
           
-          <p
+          <motion.p
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             style={{
               fontSize: 'clamp(24px, 4vw, 48px)',
               color: '#CCCCCC',
@@ -119,9 +131,12 @@ export default function LuxuryHomepage() {
             }}
           >
             Time is the Real Luxury
-          </p>
+          </motion.p>
           
-          <p
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
             style={{
               fontSize: 'clamp(16px, 2.5vw, 24px)',
               color: '#999999',
@@ -131,9 +146,12 @@ export default function LuxuryHomepage() {
             }}
           >
             White-label AI concierge that handles your client conversations, bookings, and negotiations while you focus on creating unforgettable luxury experiences.
-          </p>
+          </motion.p>
           
-          <div
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
             style={{
               display: 'flex',
               gap: '20px',
@@ -176,9 +194,9 @@ export default function LuxuryHomepage() {
             >
               See Features
             </a>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Metrics Section */}
       <section style={{
@@ -186,7 +204,11 @@ export default function LuxuryHomepage() {
         background: '#0a0a0a'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h2
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             style={{
               fontSize: 'clamp(32px, 5vw, 56px)',
               textAlign: 'center',
@@ -195,7 +217,7 @@ export default function LuxuryHomepage() {
             }}
           >
             Results That <span style={{ color: '#D4AF37' }}>Matter</span>
-          </h2>
+          </motion.h2>
           
           <div style={{
             display: 'grid',
@@ -207,8 +229,12 @@ export default function LuxuryHomepage() {
               { value: counts.satisfaction, suffix: '%', label: 'Client Satisfaction', color: '#10B981' },
               { value: counts.revenue, suffix: '%', label: 'Revenue Increase', color: '#D4AF37' }
             ].map((metric, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
                 style={{
                   background: 'rgba(212, 175, 55, 0.05)',
                   border: '2px solid rgba(212, 175, 55, 0.2)',
@@ -231,7 +257,7 @@ export default function LuxuryHomepage() {
                 }}>
                   {metric.label}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -243,7 +269,11 @@ export default function LuxuryHomepage() {
         background: '#000000'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h2
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             style={{
               fontSize: 'clamp(32px, 5vw, 56px)',
               textAlign: 'center',
@@ -252,7 +282,7 @@ export default function LuxuryHomepage() {
             }}
           >
             Core <span style={{ color: '#D4AF37' }}>Features</span>
-          </h2>
+          </motion.h2>
           
           <div style={{
             display: 'grid',
@@ -260,8 +290,13 @@ export default function LuxuryHomepage() {
             gap: 'clamp(25px, 3vw, 40px)'
           }}>
             {features.map((feature, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, borderColor: '#D4AF37' }}
                 style={{
                   background: 'rgba(26, 26, 26, 0.8)',
                   border: '2px solid rgba(212, 175, 55, 0.2)',
@@ -291,7 +326,7 @@ export default function LuxuryHomepage() {
                 }}>
                   {feature.description}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -303,7 +338,11 @@ export default function LuxuryHomepage() {
         background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
         textAlign: 'center'
       }}>
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
           style={{ maxWidth: '800px', margin: '0 auto' }}
         >
           <h2 style={{
@@ -336,7 +375,7 @@ export default function LuxuryHomepage() {
           >
             Start Your Free Trial
           </a>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer */}
