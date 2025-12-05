@@ -1,261 +1,383 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, TrendingUp, MessageSquare, Calendar, Clock } from "lucide-react";
-import { Link } from "wouter";
-import { getLoginUrl } from "@/const";
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import { useState } from "react";
 
 export default function AnalyticsDashboard() {
-  const { user, isAuthenticated, loading } = useAuth();
-  const { data: analytics, isLoading } = trpc.analytics.getAnalytics.useQuery();
+  const [timeRange, setTimeRange] = useState("7d");
+  const [selectedMetric, setSelectedMetric] = useState("all");
 
-  if (loading || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-sm text-muted-foreground">Loading analytics...</p>
-        </div>
-      </div>
-    );
-  }
+  // Mock analytics data
+  const stats = {
+    totalMessages: 12847,
+    responseRate: 94.2,
+    avgResponseTime: "2.3s",
+    activeBots: 3,
+    totalConversations: 847,
+    satisfactionScore: 4.8,
+    costSavings: "$3,240",
+    timesSaved: "127h"
+  };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle>Authentication Required</CardTitle>
-            <CardDescription>Please log in to access analytics</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="w-full">
-              <a href={getLoginUrl()}>Log In</a>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const platformData = [
+    { platform: "WhatsApp", messages: 5234, percentage: 40.7, color: "#25D366" },
+    { platform: "Instagram", messages: 3891, percentage: 30.3, color: "#E4405F" },
+    { platform: "Telegram", messages: 2456, percentage: 19.1, color: "#0088cc" },
+    { platform: "LinkedIn", messages: 1266, percentage: 9.9, color: "#0077B5" }
+  ];
 
-  const COLORS = ["#f59e0b", "#eab308", "#84cc16", "#22c55e", "#10b981"];
+  const hourlyData = [
+    { hour: "00:00", messages: 45 },
+    { hour: "03:00", messages: 23 },
+    { hour: "06:00", messages: 67 },
+    { hour: "09:00", messages: 234 },
+    { hour: "12:00", messages: 456 },
+    { hour: "15:00", messages: 389 },
+    { hour: "18:00", messages: 512 },
+    { hour: "21:00", messages: 298 }
+  ];
+
+  const topPerformers = [
+    { name: "Luxury Concierge Bot", platform: "WhatsApp", messages: 1247, rate: 94 },
+    { name: "VIP Booking Assistant", platform: "Instagram", messages: 856, rate: 91 },
+    { name: "Event Coordinator", platform: "Telegram", messages: 342, rate: 88 }
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/admin">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Analytics Dashboard</h1>
-              <p className="text-xs text-muted-foreground">Performance insights and metrics</p>
+    <div style={{
+      minHeight: '100vh',
+      background: '#000000',
+      color: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      padding: '20px'
+    }}>
+      {/* Header */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '15px',
+          marginBottom: '10px'
+        }}>
+          <div style={{ fontSize: '40px' }}>📊</div>
+          <h1 style={{
+            fontSize: 'clamp(28px, 5vw, 42px)',
+            background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: 0,
+            fontWeight: '700'
+          }}>
+            Analytics Dashboard
+          </h1>
+        </div>
+        <p style={{
+          color: '#9CA3AF',
+          fontSize: '16px',
+          margin: 0
+        }}>
+          Track performance, engagement, and ROI across all platforms
+        </p>
+      </div>
+
+      {/* Time Range Selector */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px',
+        display: 'flex',
+        gap: '10px'
+      }}>
+        {['24h', '7d', '30d', '90d', '1y'].map(range => (
+          <button
+            key={range}
+            onClick={() => setTimeRange(range)}
+            style={{
+              background: timeRange === range ? '#D4AF37' : 'rgba(255, 255, 255, 0.05)',
+              color: timeRange === range ? '#000000' : '#FFFFFF',
+              border: `1px solid ${timeRange === range ? '#D4AF37' : 'rgba(212, 175, 55, 0.3)'}`,
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            {range.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* Key Metrics Grid */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '20px'
+      }}>
+        {[
+          { label: 'Total Messages', value: stats.totalMessages.toLocaleString(), icon: '💬', color: '#D4AF37', trend: '+12%' },
+          { label: 'Response Rate', value: `${stats.responseRate}%`, icon: '✅', color: '#10b981', trend: '+3%' },
+          { label: 'Avg Response Time', value: stats.avgResponseTime, icon: '⚡', color: '#3b82f6', trend: '-15%' },
+          { label: 'Active Bots', value: stats.activeBots, icon: '🤖', color: '#8b5cf6', trend: '+1' },
+          { label: 'Conversations', value: stats.totalConversations, icon: '💭', color: '#f59e0b', trend: '+23' },
+          { label: 'Satisfaction', value: stats.satisfactionScore, icon: '⭐', color: '#ec4899', trend: '+0.2' },
+          { label: 'Cost Savings', value: stats.costSavings, icon: '💰', color: '#10b981', trend: '+$420' },
+          { label: 'Time Saved', value: stats.timesSaved, icon: '⏰', color: '#06b6d4', trend: '+18h' }
+        ].map((metric, idx) => (
+          <div key={idx} style={{
+            background: 'rgba(212, 175, 55, 0.05)',
+            border: '1px solid rgba(212, 175, 55, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: '10px'
+            }}>
+              <div style={{ fontSize: '32px' }}>{metric.icon}</div>
+              <div style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '600'
+              }}>
+                {metric.trend}
+              </div>
+            </div>
+            <div style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: metric.color,
+              marginBottom: '5px'
+            }}>
+              {metric.value}
+            </div>
+            <div style={{
+              fontSize: '14px',
+              color: '#9CA3AF'
+            }}>
+              {metric.label}
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Platform Distribution */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px',
+        background: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(212, 175, 55, 0.2)',
+        borderRadius: '12px',
+        padding: '30px'
+      }}>
+        <h2 style={{
+          fontSize: '24px',
+          fontWeight: '600',
+          marginBottom: '20px',
+          color: '#FFFFFF'
+        }}>
+          📱 Platform Distribution
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px'
+        }}>
+          {platformData.map((platform, idx) => (
+            <div key={idx} style={{
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(212, 175, 55, 0.1)',
+              borderRadius: '8px',
+              padding: '20px'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '15px'
+              }}>
+                <span style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#FFFFFF'
+                }}>
+                  {platform.platform}
+                </span>
+                <span style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: platform.color
+                }}>
+                  {platform.percentage}%
+                </span>
+              </div>
+              <div style={{
+                width: '100%',
+                height: '8px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '4px',
+                overflow: 'hidden',
+                marginBottom: '10px'
+              }}>
+                <div style={{
+                  width: `${platform.percentage}%`,
+                  height: '100%',
+                  background: platform.color,
+                  transition: 'width 0.5s ease'
+                }} />
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: '#9CA3AF'
+              }}>
+                {platform.messages.toLocaleString()} messages
+              </div>
+            </div>
+          ))}
         </div>
-      </header>
+      </div>
 
-      <main className="container py-8 space-y-8">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg Response Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{analytics?.avgResponseTime || "2.3"}s</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600">↓ 12%</span> from last week
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{analytics?.conversionRate || "68"}%</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600">↑ 5%</span> from last week
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{analytics?.totalMessages || "1,247"}</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600">↑ 18%</span> from last week
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Bookings</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{analytics?.totalBookings || "42"}</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600">↑ 23%</span> from last week
-              </p>
-            </CardContent>
-          </Card>
+      {/* Hourly Activity Chart */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px',
+        background: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(212, 175, 55, 0.2)',
+        borderRadius: '12px',
+        padding: '30px'
+      }}>
+        <h2 style={{
+          fontSize: '24px',
+          fontWeight: '600',
+          marginBottom: '20px',
+          color: '#FFFFFF'
+        }}>
+          📈 Hourly Activity
+        </h2>
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          gap: '10px',
+          height: '200px'
+        }}>
+          {hourlyData.map((data, idx) => {
+            const maxMessages = Math.max(...hourlyData.map(d => d.messages));
+            const height = (data.messages / maxMessages) * 100;
+            return (
+              <div key={idx} style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10px'
+              }}>
+                <div style={{
+                  width: '100%',
+                  height: `${height}%`,
+                  background: 'linear-gradient(180deg, #D4AF37 0%, rgba(212, 175, 55, 0.3) 100%)',
+                  borderRadius: '8px 8px 0 0',
+                  position: 'relative',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(180deg, #FFD700 0%, rgba(255, 215, 0, 0.5) 100%)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(180deg, #D4AF37 0%, rgba(212, 175, 55, 0.3) 100%)';
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-25px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    color: '#D4AF37',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {data.messages}
+                  </div>
+                </div>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#9CA3AF'
+                }}>
+                  {data.hour}
+                </div>
+              </div>
+            );
+          })}
         </div>
+      </div>
 
-        {/* Response Time Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Message Response Time Trend</CardTitle>
-            <CardDescription>Average response time over the last 7 days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart
-                data={analytics?.responseTimeTrend || [
-                  { day: "Mon", time: 2.8 },
-                  { day: "Tue", time: 2.5 },
-                  { day: "Wed", time: 2.3 },
-                  { day: "Thu", time: 2.1 },
-                  { day: "Fri", time: 2.4 },
-                  { day: "Sat", time: 2.2 },
-                  { day: "Sun", time: 2.3 },
-                ]}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis label={{ value: "Seconds", angle: -90, position: "insideLeft" }} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="time" stroke="#f59e0b" strokeWidth={2} name="Response Time (s)" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Booking Conversion Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Booking Conversion Funnel</CardTitle>
-              <CardDescription>Conversion rates by stage</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={analytics?.conversionFunnel || [
-                    { stage: "Inquiries", count: 150 },
-                    { stage: "Quotes", count: 102 },
-                    { stage: "Confirmed", count: 68 },
-                    { stage: "Completed", count: 42 },
-                  ]}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="stage" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="count" fill="#f59e0b" name="Count" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Peak Activity Hours */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Peak Activity Hours</CardTitle>
-              <CardDescription>Message volume by hour of day</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={analytics?.peakHours || [
-                    { hour: "9AM", messages: 45 },
-                    { hour: "10AM", messages: 62 },
-                    { hour: "11AM", messages: 78 },
-                    { hour: "12PM", messages: 95 },
-                    { hour: "1PM", messages: 88 },
-                    { hour: "2PM", messages: 72 },
-                    { hour: "3PM", messages: 85 },
-                    { hour: "4PM", messages: 92 },
-                    { hour: "5PM", messages: 68 },
-                  ]}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="hour" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="messages" fill="#eab308" name="Messages" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+      {/* Top Performers */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto',
+        background: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(212, 175, 55, 0.2)',
+        borderRadius: '12px',
+        padding: '30px'
+      }}>
+        <h2 style={{
+          fontSize: '24px',
+          fontWeight: '600',
+          marginBottom: '20px',
+          color: '#FFFFFF'
+        }}>
+          🏆 Top Performing Bots
+        </h2>
+        <div style={{
+          display: 'grid',
+          gap: '15px'
+        }}>
+          {topPerformers.map((bot, idx) => (
+            <div key={idx} style={{
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(212, 175, 55, 0.1)',
+              borderRadius: '8px',
+              padding: '20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#FFFFFF',
+                  marginBottom: '5px'
+                }}>
+                  {idx + 1}. {bot.name}
+                </div>
+                <div style={{
+                  fontSize: '14px',
+                  color: '#9CA3AF'
+                }}>
+                  {bot.platform} • {bot.messages} messages
+                </div>
+              </div>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#10b981'
+              }}>
+                {bot.rate}%
+              </div>
+            </div>
+          ))}
         </div>
-
-        {/* Platform Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Message Platform Distribution</CardTitle>
-            <CardDescription>Messages by platform</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={analytics?.platformDistribution || [
-                    { name: "WhatsApp", value: 720 },
-                    { name: "Instagram", value: 320 },
-                    { name: "Telegram", value: 150 },
-                    { name: "Signal", value: 57 },
-                  ]}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {(analytics?.platformDistribution || []).map((entry: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </main>
+      </div>
     </div>
   );
 }

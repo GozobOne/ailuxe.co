@@ -1,489 +1,326 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Users, 
-  DollarSign, 
-  TrendingUp,
-  Building2,
-  ArrowLeft,
-  Plus,
-  Upload,
-  Settings,
-  BarChart3,
-  Palette,
-  Globe,
-  Instagram,
-  Activity,
-  BookOpen,
-  LineChart,
-  Eye
-} from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 import { Link } from "wouter";
-import TrialDashboardWidget from "@/components/TrialDashboardWidget";
-import GlobalSearch from "@/components/GlobalSearch";
-import LogoUploadDialog from "@/components/LogoUploadDialog";
-import BrandingCustomizationDialog from "@/components/BrandingCustomizationDialog";
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated } = useAuth();
-  const [selectedTab, setSelectedTab] = useState<"overview" | "clients" | "settings">("overview");
-  const [showAddClient, setShowAddClient] = useState(false);
-  const [logoUploadClient, setLogoUploadClient] = useState<{ id: number; name: string } | null>(null);
-  const [brandingClient, setBrandingClient] = useState<{ id: number; name: string } | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
 
-  // Simulated clients data
-  const clients = [
-    { id: 1, name: "Elite Events", subdomain: "elite", mrr: 3200, status: "active", logo: null },
-    { id: 2, name: "Gala Events", subdomain: "gala", mrr: 2800, status: "active", logo: null },
-    { id: 3, name: "Luxury Weddings", subdomain: "luxuryweddings", mrr: 1900, status: "active", logo: null },
-    { id: 4, name: "Fashion Forward", subdomain: "fashionforward", mrr: 1500, status: "active", logo: null },
-    { id: 5, name: "Elite Models Agency", subdomain: "elitemodels", mrr: 1200, status: "trial", logo: null },
-    { id: 6, name: "Corporate Events Pro", subdomain: "corporateevents", mrr: 800, status: "active", logo: null },
+  const stats = {
+    totalUsers: 247,
+    activeUsers: 189,
+    totalBots: 12,
+    activeBots: 8,
+    totalMessages: 45234,
+    totalRevenue: "$12,450",
+    storageUsed: "2.4 GB",
+    apiCalls: 89234
+  };
+
+  const recentUsers = [
+    { name: "Sarah Johnson", email: "sarah@luxury.com", role: "Owner", status: "active", joined: "2024-01-15" },
+    { name: "Michael Chen", email: "michael@vip.com", role: "Admin", status: "active", joined: "2024-02-03" },
+    { name: "Emma Williams", email: "emma@elite.com", role: "Moderator", status: "active", joined: "2024-02-18" },
+    { name: "James Brown", email: "james@premium.com", role: "User", status: "inactive", joined: "2024-03-01" }
   ];
 
-  const totalMRR = clients.reduce((sum, c) => sum + c.mrr, 0);
-  const activeClients = clients.filter(c => c.status === "active").length;
-  const trialClients = clients.filter(c => c.status === "trial").length;
+  const systemHealth = [
+    { service: "Database", status: "healthy", uptime: "99.9%", latency: "12ms" },
+    { service: "API Server", status: "healthy", uptime: "99.8%", latency: "45ms" },
+    { service: "Message Queue", status: "healthy", uptime: "100%", latency: "8ms" },
+    { service: "File Storage", status: "warning", uptime: "98.5%", latency: "120ms" }
+  ];
 
-  const handleAddClient = () => {
-    setShowAddClient(true);
-    toast.info("Add Client Form", {
-      description: "This will open a form to add a new white-label client"
-    });
-  };
-
-  const handleUploadLogo = (clientId: number) => {
-    const client = clients.find(c => c.id === clientId);
-    if (client) {
-      setLogoUploadClient({ id: client.id, name: client.name });
-    }
-  };
-
-  const handleCustomizeBranding = (clientId: number) => {
-    const client = clients.find(c => c.id === clientId);
-    if (client) {
-      setBrandingClient({ id: client.id, name: client.name });
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle>Authentication Required</CardTitle>
-            <CardDescription>Please log in to access admin panel</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
-  // Check if user is admin (in real app, check user.role === 'admin')
-  const isAdmin = true; // Simulated for now
-
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle>Access Denied</CardTitle>
-            <CardDescription>You don't have permission to access the admin panel</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  const quickActions = [
+    { icon: "👥", label: "Manage Users", path: "/admin/users", color: "#D4AF37" },
+    { icon: "🤖", label: "Configure Bots", path: "/bots", color: "#3b82f6" },
+    { icon: "⚙️", label: "System Settings", path: "/admin/settings", color: "#8b5cf6" },
+    { icon: "📊", label: "View Analytics", path: "/analytics", color: "#10b981" },
+    { icon: "🔑", label: "API Settings", path: "/api-settings", color: "#f59e0b" },
+    { icon: "🎨", label: "White Label", path: "/white-label", color: "#ec4899" }
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border/40 backdrop-blur-sm bg-background/95 sticky top-0 z-50">
-        <div className="container py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">AI LUXE Admin</h1>
-              <p className="text-xs text-muted-foreground">White-label multi-tenant management</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <GlobalSearch />
-            <Button className="gradient-luxury text-foreground font-semibold" onClick={handleAddClient}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Client
-            </Button>
-          </div>
+    <div style={{
+      minHeight: '100vh',
+      background: '#000000',
+      color: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      padding: '20px'
+    }}>
+      {/* Header */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '15px',
+          marginBottom: '10px'
+        }}>
+          <div style={{ fontSize: '40px' }}>⚡</div>
+          <h1 style={{
+            fontSize: 'clamp(28px, 5vw, 42px)',
+            background: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            margin: 0,
+            fontWeight: '700'
+          }}>
+            Admin Dashboard
+          </h1>
         </div>
-      </header>
+        <p style={{
+          color: '#9CA3AF',
+          fontSize: '16px',
+          margin: 0
+        }}>
+          Manage users, monitor system health, and configure platform settings
+        </p>
+      </div>
 
-      <main className="container py-12 space-y-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: "Total MRR", value: `$${totalMRR.toLocaleString()}`, icon: DollarSign, color: "text-green-600" },
-            { label: "Active Clients", value: activeClients, icon: Users, color: "text-primary" },
-            { label: "Trial Clients", value: trialClients, icon: TrendingUp, color: "text-blue-600" },
-            { label: "Avg Revenue", value: `$${Math.round(totalMRR / clients.length)}`, icon: BarChart3, color: "text-primary" },
-          ].map((stat, idx) => (
-            <Card key={idx}>
-              <CardContent className="pt-6">
-                <stat.icon className={`w-8 h-8 mb-2 ${stat.color}`} />
-                <div className="text-3xl font-bold text-foreground">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Trial Dashboard Widget */}
-        <TrialDashboardWidget />
-
-        {/* Quick Access Services */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Access</CardTitle>
-            <CardDescription>Access platform services and monitoring tools</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-              <Link href="/instagram-setup">
-                <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
-                  <Instagram className="w-6 h-6 text-purple-600" />
-                  <span className="text-xs">Instagram Setup</span>
-                </Button>
-              </Link>
-              <Link href="/services">
-                <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
-                  <Activity className="w-6 h-6 text-green-600" />
-                  <span className="text-xs">Service Status</span>
-                </Button>
-              </Link>
-              <Link href="/setup-guide">
-                <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
-                  <BookOpen className="w-6 h-6 text-amber-600" />
-                  <span className="text-xs">Setup Guide</span>
-                </Button>
-              </Link>
-              <Link href="/analytics">
-                <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
-                  <LineChart className="w-6 h-6 text-blue-600" />
-                  <span className="text-xs">Analytics</span>
-                </Button>
-              </Link>
-              <Link href="/admin/user-guide">
-                <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
-                  <BookOpen className="w-6 h-6 text-cyan-600" />
-                  <span className="text-xs">User Guide</span>
-                </Button>
-              </Link>
-              <Link href="/live">
-                <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4">
-                  <Eye className="w-6 h-6 text-orange-600" />
-                  <span className="text-xs">Live Monitor</span>
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Revenue Forecast Graph Placeholder */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              Revenue Forecast
-            </CardTitle>
-            <CardDescription>Projected MRR growth over next 6 months</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 bg-muted/30 rounded-lg flex items-center justify-center">
-              <div className="text-center space-y-2">
-                <BarChart3 className="w-16 h-16 mx-auto text-muted-foreground" />
-                <p className="text-muted-foreground">Revenue forecast chart</p>
-                <p className="text-sm text-muted-foreground">Projected: $18,500 MRR by Q2 2026</p>
+      {/* Quick Actions */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '15px'
+      }}>
+        {quickActions.map((action, idx) => (
+          <Link key={idx} href={action.path}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: `1px solid ${action.color}33`,
+              borderRadius: '12px',
+              padding: '20px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              textDecoration: 'none'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = `${action.color}22`;
+              e.currentTarget.style.borderColor = action.color;
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+              e.currentTarget.style.borderColor = `${action.color}33`;
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '10px' }}>{action.icon}</div>
+              <div style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                color: '#FFFFFF'
+              }}>
+                {action.label}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </Link>
+        ))}
+      </div>
 
-        {/* Tabs */}
-        <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as any)}>
-          <TabsList className="grid w-full grid-cols-3 max-w-lg">
-            <TabsTrigger value="overview">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="clients">
-              <Users className="w-4 h-4 mr-2" />
-              Clients
-            </TabsTrigger>
-            <TabsTrigger value="settings">
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Platform Statistics</CardTitle>
-                <CardDescription>AI LUXE white-label performance metrics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Total Clients</span>
-                      <span className="font-bold text-lg">{clients.length}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Monthly Recurring Revenue</span>
-                      <span className="font-bold text-lg text-green-600">${totalMRR.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Average Client Value</span>
-                      <span className="font-bold text-lg">${Math.round(totalMRR / clients.length)}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Active Subscriptions</span>
-                      <Badge variant="default">{activeClients} active</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Trial Accounts</span>
-                      <Badge variant="secondary">{trialClients} trial</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Churn Rate</span>
-                      <span className="font-bold text-lg text-green-600">2.1%</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Clients Tab */}
-          <TabsContent value="clients" className="space-y-4 mt-6">
-            {clients.map((client) => (
-              <Card key={client.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-primary" />
-                        {client.name}
-                      </CardTitle>
-                      <CardDescription>
-                        <Globe className="w-3 h-3 inline mr-1" />
-                        {client.subdomain}.ailuxe.co
-                      </CardDescription>
-                    </div>
-                    <Badge variant={client.status === "active" ? "default" : "secondary"}>
-                      {client.status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Monthly Revenue</p>
-                      <p className="font-bold text-lg text-green-600">${client.mrr.toLocaleString()}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Subdomain</p>
-                      <p className="font-medium">{client.subdomain}.ailuxe.co</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Logo</p>
-                      <p className="text-sm">{client.logo ? "✓ Uploaded" : "Not set"}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" onClick={() => handleUploadLogo(client.id)}>
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload Logo
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleCustomizeBranding(client.id)}>
-                      <Palette className="w-4 h-4 mr-2" />
-                      Customize Branding
-                    </Button>
-                    <Button size="sm" variant="outline" asChild>
-                      <a href={`https://${client.subdomain}.ailuxe.co`} target="_blank" rel="noopener noreferrer">
-                        <Globe className="w-4 h-4 mr-2" />
-                        Visit Site
-                      </a>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </TabsContent>
-
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-4 mt-6">
-            {/* Admin Navigation Cards */}
-            <div className="grid md:grid-cols-3 gap-4">
-              <Link href="/admin/api-settings">
-                <Card className="hover:border-primary transition-colors cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Settings className="w-5 h-5 text-primary" />
-                      API Settings
-                    </CardTitle>
-                    <CardDescription>Configure WhatsApp, Google, and OpenRouter credentials</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-
-              <Link href="/admin/billing">
-                <Card className="hover:border-primary transition-colors cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <DollarSign className="w-5 h-5 text-primary" />
-                      Billing Management
-                    </CardTitle>
-                    <CardDescription>Manage plans, coupons, and subscriptions</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-
-              <Link href="/admin/white-label">
-                <Card className="hover:border-primary transition-colors cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Palette className="w-5 h-5 text-primary" />
-                      White-Label Settings
-                    </CardTitle>
-                    <CardDescription>Customize branding, currency, and localization</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
+      {/* Stats Grid */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '20px'
+      }}>
+        {[
+          { label: 'Total Users', value: stats.totalUsers, icon: '👥', color: '#D4AF37' },
+          { label: 'Active Users', value: stats.activeUsers, icon: '✅', color: '#10b981' },
+          { label: 'Total Bots', value: stats.totalBots, icon: '🤖', color: '#3b82f6' },
+          { label: 'Active Bots', value: stats.activeBots, icon: '⚡', color: '#8b5cf6' },
+          { label: 'Total Messages', value: stats.totalMessages.toLocaleString(), icon: '💬', color: '#f59e0b' },
+          { label: 'Revenue', value: stats.totalRevenue, icon: '💰', color: '#10b981' },
+          { label: 'Storage Used', value: stats.storageUsed, icon: '💾', color: '#ec4899' },
+          { label: 'API Calls', value: stats.apiCalls.toLocaleString(), icon: '🔌', color: '#06b6d4' }
+        ].map((stat, idx) => (
+          <div key={idx} style={{
+            background: 'rgba(212, 175, 55, 0.05)',
+            border: '1px solid rgba(212, 175, 55, 0.2)',
+            borderRadius: '12px',
+            padding: '20px'
+          }}>
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>{stat.icon}</div>
+            <div style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: stat.color,
+              marginBottom: '5px'
+            }}>
+              {stat.value}
             </div>
+            <div style={{
+              fontSize: '14px',
+              color: '#9CA3AF'
+            }}>
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>AI LUXE Platform Settings</CardTitle>
-                <CardDescription>Configure main platform branding and settings</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Platform Logo</label>
-                    <div className="flex gap-2">
-                      <Button variant="outline">
-                        <Upload className="w-4 h-4 mr-2" />
-                        Upload AI LUXE Logo
-                      </Button>
-                      <p className="text-sm text-muted-foreground self-center">Current: Default AI LUXE logo</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Primary Brand Color</label>
-                    <div className="flex gap-2 items-center">
-                      <div className="w-12 h-12 rounded-lg bg-[#D4AF37] border-2 border-border"></div>
-                      <input
-                        type="text"
-                        value="#D4AF37"
-                        readOnly
-                        className="px-4 py-2 rounded-lg border border-border bg-background"
-                      />
-                      <Button variant="outline" size="sm">Change</Button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Secondary Brand Color</label>
-                    <div className="flex gap-2 items-center">
-                      <div className="w-12 h-12 rounded-lg bg-[#1A1A1A] border-2 border-border"></div>
-                      <input
-                        type="text"
-                        value="#1A1A1A"
-                        readOnly
-                        className="px-4 py-2 rounded-lg border border-border bg-background"
-                      />
-                      <Button variant="outline" size="sm">Change</Button>
-                    </div>
-                  </div>
-
-                  <div className="pt-4">
-                    <Button className="gradient-luxury text-foreground font-semibold">
-                      Save Platform Settings
-                    </Button>
-                  </div>
+      {/* System Health */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto 30px',
+        background: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(212, 175, 55, 0.2)',
+        borderRadius: '12px',
+        padding: '30px'
+      }}>
+        <h2 style={{
+          fontSize: '24px',
+          fontWeight: '600',
+          marginBottom: '20px',
+          color: '#FFFFFF'
+        }}>
+          🏥 System Health
+        </h2>
+        <div style={{
+          display: 'grid',
+          gap: '15px'
+        }}>
+          {systemHealth.map((service, idx) => (
+            <div key={idx} style={{
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(212, 175, 55, 0.1)',
+              borderRadius: '8px',
+              padding: '20px',
+              display: 'grid',
+              gridTemplateColumns: '1fr auto auto auto',
+              gap: '20px',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#FFFFFF',
+                  marginBottom: '5px'
+                }}>
+                  {service.service}
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-primary/5">
-              <CardHeader>
-                <CardTitle className="text-lg">White-Label Features</CardTitle>
-                <CardDescription>Available customization options for clients</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {[
-                    "Custom subdomain (client.ailuxe.co)",
-                    "Logo upload and branding",
-                    "Primary and secondary color customization",
-                    "Persona cloning from chat history",
-                    "WhatsApp bot integration",
-                    "Booking and contract management",
-                    "Revenue tracking and analytics",
-                    "Multi-currency support (coming soon)",
-                  ].map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary"></div>
-                      <p className="text-sm">{feature}</p>
-                    </div>
-                  ))}
+                <div style={{
+                  display: 'inline-block',
+                  background: service.status === 'healthy' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                  color: service.status === 'healthy' ? '#10b981' : '#f59e0b',
+                  padding: '4px 12px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  textTransform: 'uppercase'
+                }}>
+                  {service.status}
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </main>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '14px', color: '#9CA3AF', marginBottom: '5px' }}>Uptime</div>
+                <div style={{ fontSize: '18px', fontWeight: '600', color: '#10b981' }}>{service.uptime}</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '14px', color: '#9CA3AF', marginBottom: '5px' }}>Latency</div>
+                <div style={{ fontSize: '18px', fontWeight: '600', color: '#3b82f6' }}>{service.latency}</div>
+              </div>
+              <div style={{
+                width: '12px',
+                height: '12px',
+                borderRadius: '50%',
+                background: service.status === 'healthy' ? '#10b981' : '#f59e0b',
+                boxShadow: service.status === 'healthy' ? '0 0 10px #10b981' : '0 0 10px #f59e0b'
+              }} />
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {/* Dialogs */}
-      {logoUploadClient && (
-        <LogoUploadDialog
-          open={!!logoUploadClient}
-          onOpenChange={(open) => !open && setLogoUploadClient(null)}
-          clientId={logoUploadClient.id}
-          clientName={logoUploadClient.name}
-          onUploadComplete={() => {
-            toast.success("Logo uploaded successfully!");
-            setLogoUploadClient(null);
-          }}
-        />
-      )}
-
-      {brandingClient && (
-        <BrandingCustomizationDialog
-          open={!!brandingClient}
-          onOpenChange={(open) => !open && setBrandingClient(null)}
-          clientId={brandingClient.id}
-          clientName={brandingClient.name}
-          onSaveComplete={() => {
-            toast.success("Branding updated!");
-            setBrandingClient(null);
-          }}
-        />
-      )}
+      {/* Recent Users */}
+      <div style={{
+        maxWidth: '1600px',
+        margin: '0 auto',
+        background: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid rgba(212, 175, 55, 0.2)',
+        borderRadius: '12px',
+        padding: '30px'
+      }}>
+        <h2 style={{
+          fontSize: '24px',
+          fontWeight: '600',
+          marginBottom: '20px',
+          color: '#FFFFFF'
+        }}>
+          👥 Recent Users
+        </h2>
+        <div style={{
+          display: 'grid',
+          gap: '15px'
+        }}>
+          {recentUsers.map((user, idx) => (
+            <div key={idx} style={{
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(212, 175, 55, 0.1)',
+              borderRadius: '8px',
+              padding: '20px',
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr 1fr 1fr',
+              gap: '20px',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#FFFFFF',
+                  marginBottom: '5px'
+                }}>
+                  {user.name}
+                </div>
+                <div style={{
+                  fontSize: '14px',
+                  color: '#9CA3AF'
+                }}>
+                  {user.email}
+                </div>
+              </div>
+              <div style={{
+                display: 'inline-block',
+                background: 'rgba(212, 175, 55, 0.1)',
+                color: '#D4AF37',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                textAlign: 'center'
+              }}>
+                {user.role}
+              </div>
+              <div style={{
+                display: 'inline-block',
+                background: user.status === 'active' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(156, 163, 175, 0.1)',
+                color: user.status === 'active' ? '#10b981' : '#9CA3AF',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                textAlign: 'center',
+                textTransform: 'capitalize'
+              }}>
+                {user.status}
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: '#9CA3AF',
+                textAlign: 'right'
+              }}>
+                {user.joined}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
