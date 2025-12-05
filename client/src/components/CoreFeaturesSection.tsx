@@ -12,6 +12,7 @@ const CORE_FEATURES: Array<{
   color: string;
   bgColor: string;
   route: string;
+  image?: string;
 }> = [
   {
     icon: Bot,
@@ -20,6 +21,7 @@ const CORE_FEATURES: Array<{
     color: "text-purple-600",
     bgColor: "bg-purple-50",
     route: "/persona",
+    image: "/images/feature-persona-cloning.png",
   },
   {
     icon: MessageSquare,
@@ -28,6 +30,7 @@ const CORE_FEATURES: Array<{
     color: "text-blue-600",
     bgColor: "bg-blue-50",
     route: "/bot",
+    image: "/images/feature-multi-platform.png",
   },
   {
     icon: Mic,
@@ -36,6 +39,7 @@ const CORE_FEATURES: Array<{
     color: "text-green-600",
     bgColor: "bg-green-50",
     route: "/bot",
+    image: "/images/feature-voice-notes.png",
   },
   {
     icon: Calendar,
@@ -102,6 +106,16 @@ export default function CoreFeaturesSection() {
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {/* Feature Image */}
+                  {feature.image && (
+                    <div className="rounded-lg overflow-hidden mb-4 shadow-md">
+                      <img 
+                        src={feature.image} 
+                        alt={`${feature.title} Preview`} 
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
                   <CardDescription className="text-base leading-relaxed mb-4">
                     {feature.description}
                   </CardDescription>
