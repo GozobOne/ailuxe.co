@@ -153,7 +153,7 @@ function Router() {
           {/* Admin & Management */}
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/personas" component={PersonaManagement} />
-          <Route path="/bots" component={BotManagement} />
+          <Route path="/bot" component={BotManagement} />
           <Route path="/team" component={TeamManagement} />
           
           {/* Configuration */}

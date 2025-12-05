@@ -1,336 +1,237 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { trpc } from "@/lib/trpc";
-import { 
-  Upload, 
-  Sparkles, 
-  FileText,
-  CheckCircle2,
-  Clock,
-  Loader2,
-  ArrowLeft
-} from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Link } from "wouter";
-
 export default function PersonaManagement() {
-  const { user, isAuthenticated } = useAuth();
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-
-  const { data: chatHistories, refetch } = trpc.persona.list.useQuery(undefined, {
-    enabled: isAuthenticated,
-  });
-
-  const uploadMutation = trpc.persona.uploadChatHistory.useMutation({
-    onSuccess: async () => {
-      toast.success("File uploaded successfully!");
-      await refetch();
-      setUploadedFile(null);
-    },
-    onError: (error) => {
-      toast.error("Upload failed", {
-        description: error.message
-      });
-      setIsUploading(false);
-    }
-  });
-
-  const cloneMutation = trpc.persona.clonePersona.useMutation({
-    onSuccess: async (data) => {
-      toast.success("Persona cloned successfully! 🎯", {
-        description: `Model ID: ${data.personaModelId}`
-      });
-      await refetch();
-    },
-    onError: (error) => {
-      toast.error("Cloning failed", {
-        description: error.message
-      });
-    }
-  });
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const validTypes = ['text/plain', 'application/json', 'application/pdf'];
-      if (!validTypes.includes(file.type)) {
-        toast.error("Invalid file type", {
-          description: "Please upload TXT, JSON, or PDF files only"
-        });
-        return;
-      }
-      
-      if (file.size > 16 * 1024 * 1024) {
-        toast.error("File too large", {
-          description: "Maximum file size is 16MB"
-        });
-        return;
-      }
-      
-      setUploadedFile(file);
-    }
-  };
-
-  const handleUploadAndClone = async () => {
-    if (!uploadedFile) {
-      toast.error("No file selected");
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      // Convert file to base64
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const base64 = e.target?.result?.toString().split(',')[1];
-        if (!base64) {
-          toast.error("Failed to read file");
-          setIsUploading(false);
-          return;
-        }
-
-        const fileType = uploadedFile.type.includes('json') ? 'json' : 
-                        uploadedFile.type.includes('pdf') ? 'pdf' : 'txt';
-
-        // Upload file
-        const result = await uploadMutation.mutateAsync({
-          fileName: uploadedFile.name,
-          fileContent: base64,
-          fileType,
-        });
-
-        // Clone persona
-        await cloneMutation.mutateAsync({
-          chatHistoryId: result.id,
-        });
-
-        setIsUploading(false);
-      };
-
-      reader.readAsDataURL(uploadedFile);
-    } catch (error) {
-      setIsUploading(false);
-      console.error('Upload error:', error);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle>Authentication Required</CardTitle>
-            <CardDescription>Please log in to manage personas</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border/40 backdrop-blur-sm bg-background/95 sticky top-0 z-50">
-        <div className="container py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Persona Management</h1>
-              <p className="text-xs text-muted-foreground">Clone AI from chat history</p>
-            </div>
-          </div>
+    <div style={{
+      minHeight: '100vh',
+      background: '#000000',
+      color: '#FFFFFF',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      padding: '80px 20px 40px'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <h1 style={{
+            fontSize: 'clamp(32px, 5vw, 48px)',
+            fontWeight: '700',
+            marginBottom: '15px',
+            background: 'linear-gradient(135deg, #D4AF37 0%, #F4E5B8 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            Persona Management
+          </h1>
+          <p style={{ fontSize: '18px', color: '#999999' }}>
+            Clone your communication style from chat history
+          </p>
         </div>
-      </header>
 
-      <main className="container py-12 space-y-12">
         {/* Upload Section */}
-        <section className="max-w-2xl mx-auto space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold text-foreground">Upload Chat History</h2>
-            <p className="text-muted-foreground">
-              Upload WhatsApp TXT, Telegram JSON, or PDF files to clone communication style
+        <div style={{
+          background: 'rgba(212, 175, 55, 0.1)',
+          border: '2px solid #D4AF37',
+          borderRadius: '16px',
+          padding: '40px',
+          marginBottom: '40px',
+          maxWidth: '600px',
+          margin: '0 auto 40px'
+        }}>
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <div style={{
+              fontSize: '64px',
+              marginBottom: '20px'
+            }}>
+              📤
+            </div>
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: '600',
+              color: '#D4AF37',
+              marginBottom: '10px'
+            }}>
+              Upload Chat History
+            </h2>
+            <p style={{ fontSize: '16px', color: '#CCCCCC' }}>
+              Supports WhatsApp TXT, Telegram JSON, and PDF files (max 16MB)
             </p>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Upload className="w-5 h-5 text-primary" />
-                Upload & Clone
-              </CardTitle>
-              <CardDescription>
-                AI will analyze 100-500 messages to clone tone, language, and workflow
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
-                <input
-                  type="file"
-                  id="chat-upload"
-                  accept=".txt,.json,.pdf"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  disabled={isUploading}
-                />
-                <label 
-                  htmlFor="chat-upload" 
-                  className={`cursor-pointer flex flex-col items-center gap-3 ${isUploading ? 'opacity-50' : ''}`}
-                >
-                  <FileText className="w-12 h-12 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-foreground">
-                      {uploadedFile ? uploadedFile.name : "Click to upload or drag and drop"}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      TXT, JSON, or PDF up to 16MB
-                    </p>
-                  </div>
-                </label>
-              </div>
+          <div style={{
+            border: '2px dashed rgba(212, 175, 55, 0.5)',
+            borderRadius: '12px',
+            padding: '40px',
+            textAlign: 'center',
+            cursor: 'pointer',
+            transition: 'all 0.3s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#D4AF37';
+            e.currentTarget.style.background = 'rgba(212, 175, 55, 0.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.5)';
+            e.currentTarget.style.background = 'transparent';
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: '15px' }}>📁</div>
+            <p style={{ fontSize: '16px', color: '#FFFFFF', marginBottom: '5px' }}>
+              Click to upload or drag and drop
+            </p>
+            <p style={{ fontSize: '14px', color: '#999999' }}>
+              TXT, JSON, or PDF up to 16MB
+            </p>
+          </div>
 
-              {uploadedFile && (
-                <Button 
-                  className="w-full gradient-luxury text-foreground font-semibold"
-                  onClick={handleUploadAndClone}
-                  disabled={isUploading}
-                >
-                  {isUploading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Upload & Clone Persona
-                    </>
-                  )}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </section>
+          <button style={{
+            width: '100%',
+            marginTop: '20px',
+            background: '#D4AF37',
+            color: '#000000',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '15px 30px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'transform 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+            ✨ Upload & Clone Persona
+          </button>
+        </div>
 
         {/* Personas List */}
-        <section className="max-w-4xl mx-auto space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-foreground">Your Personas</h2>
-            <p className="text-muted-foreground">
-              Manage and view your cloned AI personas
-            </p>
-          </div>
+        <div>
+          <h2 style={{
+            fontSize: '28px',
+            fontWeight: '600',
+            color: '#D4AF37',
+            marginBottom: '25px',
+            textAlign: 'center'
+          }}>
+            Your Personas
+          </h2>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {chatHistories && chatHistories.length > 0 ? (
-              chatHistories.map((persona) => (
-                <Card key={persona.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          <FileText className="w-5 h-5 text-primary" />
-                          {persona.fileName}
-                        </CardTitle>
-                        <CardDescription className="mt-1">
-                          {persona.fileType?.toUpperCase()} • {persona.messageCount || 0} messages
-                        </CardDescription>
-                      </div>
-                      {persona.processedAt ? (
-                        <Badge variant="default" className="bg-green-600">
-                          <CheckCircle2 className="w-3 h-3 mr-1" />
-                          Cloned
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary">
-                          <Clock className="w-3 h-3 mr-1" />
-                          Pending
-                        </Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {persona.processedAt && persona.toneConfig ? (
-                      <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
-                        {(() => {
-                          try {
-                            const config = JSON.parse(persona.toneConfig as string);
-                            return (
-                              <>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">Tone:</span>
-                                  <span className="font-medium">{config.tone || 'N/A'}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">Language:</span>
-                                  <span className="font-medium">{config.language || 'N/A'}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">Style:</span>
-                                  <span className="font-medium">{config.responseStyle || 'N/A'}</span>
-                                </div>
-                              </>
-                            );
-                          } catch {
-                            return <p className="text-muted-foreground">Configuration data unavailable</p>;
-                          }
-                        })()}
-                      </div>
-                    ) : (
-                      <div className="text-center py-4">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => cloneMutation.mutate({ chatHistoryId: persona.id })}
-                          disabled={cloneMutation.isPending}
-                        >
-                          {cloneMutation.isPending ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Cloning...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-4 h-4 mr-2" />
-                              Clone Persona
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    )}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '20px'
+          }}>
+            {[
+              {
+                name: 'Elite Events Manager',
+                type: 'WhatsApp TXT',
+                messages: 342,
+                tone: 'Professional',
+                status: 'Active'
+              },
+              {
+                name: 'Luxury Concierge',
+                type: 'Telegram JSON',
+                messages: 156,
+                tone: 'Friendly',
+                status: 'Active'
+              },
+              {
+                name: 'VIP Coordinator',
+                type: 'PDF',
+                messages: 89,
+                tone: 'Formal',
+                status: 'Training'
+              }
+            ].map((persona, index) => (
+              <div key={index} style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(212, 175, 55, 0.3)',
+                borderRadius: '12px',
+                padding: '25px',
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#D4AF37';
+                e.currentTarget.style.transform = 'translateY(-5px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  marginBottom: '15px'
+                }}>
+                  <h3 style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: '#FFFFFF'
+                  }}>
+                    {persona.name}
+                  </h3>
+                  <span style={{
+                    background: persona.status === 'Active' ? '#4CAF50' : '#FF9800',
+                    color: '#000000',
+                    padding: '4px 12px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    {persona.status}
+                  </span>
+                </div>
 
-                    {persona.personaModelId && (
-                      <div className="pt-2 border-t border-border">
-                        <p className="text-xs text-muted-foreground">
-                          Model ID: <span className="font-mono">{persona.personaModelId}</span>
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <Card className="md:col-span-2">
-                <CardContent className="py-12 text-center">
-                  <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-lg font-medium text-foreground mb-2">No personas yet</p>
-                  <p className="text-muted-foreground">
-                    Upload your first chat history to get started
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+                <div style={{ marginBottom: '15px' }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '8px'
+                  }}>
+                    <span style={{ color: '#999999', fontSize: '14px' }}>Type:</span>
+                    <span style={{ color: '#FFFFFF', fontSize: '14px' }}>{persona.type}</span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '8px'
+                  }}>
+                    <span style={{ color: '#999999', fontSize: '14px' }}>Messages:</span>
+                    <span style={{ color: '#FFFFFF', fontSize: '14px' }}>{persona.messages}</span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between'
+                  }}>
+                    <span style={{ color: '#999999', fontSize: '14px' }}>Tone:</span>
+                    <span style={{ color: '#FFFFFF', fontSize: '14px' }}>{persona.tone}</span>
+                  </div>
+                </div>
+
+                <button style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: '2px solid #D4AF37',
+                  borderRadius: '8px',
+                  color: '#D4AF37',
+                  padding: '10px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#D4AF37';
+                  e.currentTarget.style.color = '#000000';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = '#D4AF37';
+                }}>
+                  View Details
+                </button>
+              </div>
+            ))}
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   );
 }
