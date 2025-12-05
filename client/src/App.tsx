@@ -1,9 +1,9 @@
 import { Route, Switch } from "wouter";
 import { ClerkProvider, SignIn, SignUp, useAuth } from "@clerk/clerk-react";
-import LuxuryHomepage from "./components/LuxuryHomepage";
+import Home from "./pages/Home";
 
 function HomePage() {
-  return <LuxuryHomepage />;
+  return <Home />;
 }
 
 function SignInPage() {
