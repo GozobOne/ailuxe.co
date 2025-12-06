@@ -18,6 +18,7 @@ import {
   LogOut,
   User
 } from "lucide-react";
+import { cn } from "@/lib/utils"; // Ensure utils exist or use standard class string
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,241 +48,110 @@ export default function Navigation() {
     return null;
   }
 
+  // Sidebar Component (Reusable)
+  const SidebarContent = () => (
+    <div className="h-full flex flex-col p-6 bg-black/40 backdrop-blur-xl border-r border-[#D4AF37]/30 text-white overflow-y-auto w-[280px]">
+      {/* User Info */}
+      <div className="mb-8 p-4 rounded-xl border border-[#D4AF37]/50 bg-[#D4AF37]/10 flex flex-col items-center text-center shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+        <div className="w-16 h-16 rounded-full bg-[#D4AF37] flex items-center justify-center text-black text-2xl font-bold mb-3 shadow-lg">
+          {user?.name?.[0] || 'U'}
+        </div>
+        <div className="font-playfair text-lg font-bold text-[#D4AF37]">{user?.name || 'User'}</div>
+        <div className="text-xs text-gray-400 mt-1">{user?.email}</div>
+      </div>
+
+      {/* Menu Items */}
+      <nav className="flex-1 space-y-2">
+        {menuItems.map((item, index) => {
+          const Icon = item.icon;
+          const isActive = location === item.path;
+          return (
+            <button
+              key={index}
+              onClick={() => {
+                setLocation(item.path);
+                setIsOpen(false);
+              }}
+              className={cn(
+                "w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-300 group",
+                isActive
+                  ? "bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.3)]"
+                  : "hover:bg-white/5 hover:text-[#D4AF37] border border-transparent"
+              )}
+            >
+              <Icon size={20} className={cn("transition-transform group-hover:scale-110", isActive && "text-[#D4AF37]")} />
+              <span className="font-medium">{item.label}</span>
+              {isActive && (
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_5px_#D4AF37]" />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent my-6" />
+
+      {/* Bottom Actions */}
+      <div className="space-y-2">
+        <button
+          onClick={() => {
+            setLocation("/profile");
+            setIsOpen(false);
+          }}
+          className="w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-300 hover:bg-white/5 hover:text-[#D4AF37] group text-gray-300"
+        >
+          <User size={20} className="group-hover:scale-110 transition-transform" />
+          <span className="font-medium">Profile</span>
+        </button>
+
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-300 hover:bg-red-500/10 hover:text-red-400 group text-red-500/80 border border-transparent hover:border-red-500/30"
+        >
+          <LogOut size={20} className="group-hover:scale-110 transition-transform" />
+          <span className="font-medium">Sign Out</span>
+        </button>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-8 text-center text-[10px] text-gray-500 font-mono">
+        <div className="mb-2 space-x-3">
+          <a href="/terms" className="hover:text-[#D4AF37] transition-colors">Terms</a>
+          <a href="/policy" className="hover:text-[#D4AF37] transition-colors">Privacy</a>
+        </div>
+        <div>© 2025 AI LUXE</div>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 1000,
-          background: '#D4AF37',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '12px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        {isOpen ? <X size={24} color="#000" /> : <Menu size={24} color="#000" />}
-      </button>
+      {/* Mobile Menu Button - Visible only on mobile/tablet */}
+      <div className="lg:hidden fixed top-5 left-5 z-[50]">
+        <div className="bg-black/50 backdrop-blur-md p-1 rounded-lg border border-[#D4AF37]/30">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 text-[#D4AF37] hover:bg-[#D4AF37]/10 rounded-md transition-colors"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
 
-      {/* Overlay */}
+      {/* Mobile Drawer */}
       {isOpen && (
-        <div
-          onClick={() => setIsOpen(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.7)',
-            zIndex: 998
-          }}
-        />
+        <div className="lg:hidden fixed inset-0 z-[49]">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+          <div className="absolute left-0 top-0 h-full">
+            <SidebarContent />
+          </div>
+        </div>
       )}
 
-      {/* Sidebar */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: isOpen ? 0 : '-100%',
-          width: 'min(320px, 80vw)',
-          height: '100vh',
-          background: '#000000',
-          borderLeft: '2px solid #D4AF37',
-          zIndex: 999,
-          transition: 'right 0.3s ease',
-          overflowY: 'auto',
-          padding: '80px 20px 20px',
-          fontFamily: 'system-ui, -apple-system, sans-serif'
-        }}
-      >
-        {/* User Info */}
-        <div style={{
-          background: 'rgba(212, 175, 55, 0.1)',
-          border: '2px solid #D4AF37',
-          borderRadius: '12px',
-          padding: '20px',
-          marginBottom: '30px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: '#D4AF37',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 15px',
-            fontSize: '24px',
-            fontWeight: 'bold',
-            color: '#000'
-          }}>
-            {user?.name?.[0] || 'U'}
-          </div>
-          <div style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            color: '#FFFFFF',
-            marginBottom: '5px'
-          }}>
-            {user?.name || 'User'}
-          </div>
-          <div style={{
-            fontSize: '14px',
-            color: '#999999'
-          }}>
-            {user?.email}
-          </div>
-        </div>
-
-        {/* Menu Items */}
-        <nav>
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-            const isActive = location === item.path;
-            return (
-              <button
-                key={index}
-                onClick={() => {
-                  setLocation(item.path);
-                  setIsOpen(false);
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '15px',
-                  padding: '15px 20px',
-                  marginBottom: '8px',
-                  background: isActive ? 'rgba(212, 175, 55, 0.2)' : 'transparent',
-                  border: isActive ? '2px solid #D4AF37' : '2px solid transparent',
-                  borderRadius: '8px',
-                  color: isActive ? '#D4AF37' : '#FFFFFF',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  textAlign: 'left'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = 'transparent';
-                  }
-                }}
-              >
-                <Icon size={20} />
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Divider */}
-        <div style={{
-          height: '2px',
-          background: 'rgba(255, 255, 255, 0.1)',
-          margin: '30px 0'
-        }} />
-
-        {/* Bottom Actions */}
-        <div>
-          <button
-            onClick={() => {
-              setLocation("/profile");
-              setIsOpen(false);
-            }}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              padding: '15px 20px',
-              marginBottom: '8px',
-              background: 'transparent',
-              border: '2px solid transparent',
-              borderRadius: '8px',
-              color: '#FFFFFF',
-              fontSize: '16px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              textAlign: 'left'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <User size={20} />
-            Profile
-          </button>
-
-          <button
-            onClick={handleLogout}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              padding: '15px 20px',
-              background: 'transparent',
-              border: '2px solid #EF4444',
-              borderRadius: '8px',
-              color: '#EF4444',
-              fontSize: '16px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              textAlign: 'left'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <LogOut size={20} />
-            Sign Out
-          </button>
-        </div>
-
-        {/* Footer */}
-        <div style={{
-          marginTop: '30px',
-          padding: '20px',
-          textAlign: 'center',
-          fontSize: '12px',
-          color: '#666666'
-        }}>
-          <div style={{ marginBottom: '10px' }}>
-            <a href="/terms" style={{ color: '#999999', textDecoration: 'none', marginRight: '15px' }}>
-              Terms
-            </a>
-            <a href="/policy" style={{ color: '#999999', textDecoration: 'none' }}>
-              Privacy
-            </a>
-          </div>
-          <div>
-            © 2025 AI LUXE. All rights reserved.
-          </div>
-        </div>
+      {/* Desktop Sidebar - Persistent */}
+      <div className="hidden lg:block fixed left-0 top-0 bottom-0 z-40 bg-black">
+        <SidebarContent />
       </div>
     </>
   );

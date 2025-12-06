@@ -2,6 +2,7 @@ import { Route, Switch } from "wouter";
 import { ClerkProvider, SignIn, SignUp, useAuth } from "@clerk/clerk-react";
 import { lazy, Suspense } from "react";
 import Navigation from "./components/Navigation";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Lazy load pages to reduce initial bundle size
 const Home = lazy(() => import("./pages/Home"));
@@ -79,8 +80,8 @@ function SignInPage() {
       justifyContent: 'center',
       padding: '20px'
     }}>
-      <SignIn 
-        routing="path" 
+      <SignIn
+        routing="path"
         path="/sign-in"
         appearance={{
           elements: {
@@ -103,8 +104,8 @@ function SignUpPage() {
       justifyContent: 'center',
       padding: '20px'
     }}>
-      <SignUp 
-        routing="path" 
+      <SignUp
+        routing="path"
         path="/sign-up"
         appearance={{
           elements: {
@@ -144,7 +145,7 @@ function NotFoundPage() {
       }}>
         Page Not Found
       </p>
-      <a 
+      <a
         href="/"
         style={{
           background: '#D4AF37',
@@ -166,71 +167,77 @@ function Router() {
   const { isSignedIn } = useAuth();
 
   return (
-    <>
-      {isSignedIn && <Navigation />}
-      <Suspense fallback={<LoadingScreen />}>
-        <Switch>
-          <Route path="/" component={HomePage} />
-          <Route path="/sign-in" component={SignInPage} />
-          <Route path="/sign-up" component={SignUpPage} />
-          
-          {/* Admin & Management */}
-          <Route path="/admin" component={AdminDashboard} />
-          <Route path="/personas" component={PersonaManagement} />
-          <Route path="/bot" component={BotManagement} />
-          <Route path="/team" component={TeamManagement} />
-          
-          {/* Configuration */}
-          <Route path="/api-settings" component={ApiSettings} />
-          <Route path="/white-label" component={WhiteLabelSettings} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/notifications" component={NotificationSettings} />
-          <Route path="/voice-settings" component={VoiceSettings} />
-          
-          {/* Communication */}
-          <Route path="/messages" component={Messages} />
-          <Route path="/messages/search" component={MessageSearch} />
-          <Route path="/conversation/:id" component={ConversationView} />
-          <Route path="/contacts" component={Contacts} />
-          
-          {/* Business Tools */}
-          <Route path="/bookings" component={BookingsManagement} />
-          <Route path="/analytics" component={AnalyticsDashboard} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/search" component={GlobalSearch} />
-          <Route path="/roi-guide" component={ROIGuide} />
-          <Route path="/account" component={AccountManagement} />
-          <Route path="/test" component={TestingDashboard} />
-          
-          {/* Integration & Automation */}
-          <Route path="/integrations" component={Integrations} />
-          <Route path="/workflows" component={Workflows} />
-          <Route path="/templates" component={Templates} />
-          <Route path="/ai-training" component={AITraining} />
-          
-          {/* Resources */}
-          <Route path="/knowledge-base" component={KnowledgeBase} />
-          <Route path="/help" component={Help} />
-          <Route path="/support" component={Support} />
-          <Route path="/tutorial" component={Tutorial} />
-          <Route path="/getting-started" component={GettingStarted} />
-          
-          {/* Marketing */}
-          <Route path="/demo" component={Demo} />
-          <Route path="/playground" component={Playground} />
-          <Route path="/qr-codes" component={QRCodes} />
-          <Route path="/pricing" component={Pricing} />
-          
-          {/* Legal & Onboarding */}
-          <Route path="/onboarding" component={Onboarding} />
-          <Route path="/terms" component={Terms} />
-          <Route path="/policy" component={Policy} />
-          
-          <Route component={NotFoundPage} />
-        </Switch>
-      </Suspense>
-    </>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-black text-white selection:bg-[#D4AF37] selection:text-black font-sans">
+        {isSignedIn && <Navigation />}
+
+        {/* Main Content Area - Pushed by Sidebar on Desktop */}
+        <main className={isSignedIn ? "lg:pl-[280px] transition-all duration-300 min-h-screen bg-black" : "w-full min-h-screen bg-black"}>
+          <Suspense fallback={<LoadingScreen />}>
+            <Switch>
+              <Route path="/" component={HomePage} />
+              <Route path="/sign-in" component={SignInPage} />
+              <Route path="/sign-up" component={SignUpPage} />
+
+              {/* Admin & Management */}
+              <Route path="/admin" component={AdminDashboard} />
+              <Route path="/personas" component={PersonaManagement} />
+              <Route path="/bot" component={BotManagement} />
+              <Route path="/team" component={TeamManagement} />
+
+              {/* Configuration */}
+              <Route path="/api-settings" component={ApiSettings} />
+              <Route path="/white-label" component={WhiteLabelSettings} />
+              <Route path="/settings" component={Settings} />
+              <Route path="/profile" component={Profile} />
+              <Route path="/notifications" component={NotificationSettings} />
+              <Route path="/voice-settings" component={VoiceSettings} />
+
+              {/* Communication */}
+              <Route path="/messages" component={Messages} />
+              <Route path="/messages/search" component={MessageSearch} />
+              <Route path="/conversation/:id" component={ConversationView} />
+              <Route path="/contacts" component={Contacts} />
+
+              {/* Business Tools */}
+              <Route path="/bookings" component={BookingsManagement} />
+              <Route path="/analytics" component={AnalyticsDashboard} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/search" component={GlobalSearch} />
+              <Route path="/roi-guide" component={ROIGuide} />
+              <Route path="/account" component={AccountManagement} />
+              <Route path="/test" component={TestingDashboard} />
+
+              {/* Integration & Automation */}
+              <Route path="/integrations" component={Integrations} />
+              <Route path="/workflows" component={Workflows} />
+              <Route path="/templates" component={Templates} />
+              <Route path="/ai-training" component={AITraining} />
+
+              {/* Resources */}
+              <Route path="/knowledge-base" component={KnowledgeBase} />
+              <Route path="/help" component={Help} />
+              <Route path="/support" component={Support} />
+              <Route path="/tutorial" component={Tutorial} />
+              <Route path="/getting-started" component={GettingStarted} />
+
+              {/* Marketing */}
+              <Route path="/demo" component={Demo} />
+              <Route path="/playground" component={Playground} />
+              <Route path="/qr-codes" component={QRCodes} />
+              <Route path="/pricing" component={Pricing} />
+
+              {/* Legal & Onboarding */}
+              <Route path="/onboarding" component={Onboarding} />
+              <Route path="/terms" component={Terms} />
+              <Route path="/policy" component={Policy} />
+
+              <Route component={NotFoundPage} />
+            </Switch>
+          </Suspense>
+        </main>
+      </div>
+    </ErrorBoundary>
   );
 }
 

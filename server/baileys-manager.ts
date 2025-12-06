@@ -295,14 +295,26 @@ async function handleIncomingMessage(userId: number, message: WAMessage) {
 
     // Fetch user's persona configuration
     const persona = await getUserPersona(userId);
-    
+
     // Generate AI response using persona tone
     const aiResponse = await generateAIResponse(text, persona);
-    
+
     if (aiResponse) {
+      // GDPR Compliance Check
+      const { checkGDPR } = await import("./gdpr_moderator");
+      console.log(`[Baileys] Checking GDPR compliance for response...`);
+      const compliance = await checkGDPR(aiResponse);
+
+      if (!compliance.safe) {
+        console.warn(`[Baileys] Response blocked by GDPR shield: ${compliance.reason}`);
+        await sendBaileysMessage(userId, from, "I apologize, but I cannot process that request due to privacy and safety guidelines.");
+        await logMessage(userId, "whatsapp", "outbound", "[BLOCKED_GDPR_VIOLATION]", from);
+        return;
+      }
+
       // Send response via Baileys
       const sent = await sendBaileysMessage(userId, from, aiResponse);
-      
+
       if (sent) {
         // Log outbound message
         await logMessage(userId, "whatsapp", "outbound", aiResponse, from);
@@ -343,7 +355,7 @@ async function logMessage(
     const { getDb } = await import("./db");
     const { messages } = await import("../drizzle/schema");
     const db = await getDb();
-    
+
     if (!db) {
       console.warn("[Baileys] Cannot log message: database not available");
       return;
@@ -378,7 +390,7 @@ async function autoAddUnknownContact(
     const { contacts } = await import("../drizzle/schema");
     const { eq, and } = await import("drizzle-orm");
     const db = await getDb();
-    
+
     if (!db) {
       console.warn("[Baileys] Cannot check contact: database not available");
       return;
@@ -386,7 +398,7 @@ async function autoAddUnknownContact(
 
     // Extract phone number from remoteJid (format: 1234567890@s.whatsapp.net)
     const phone = remoteJid.split('@')[0];
-    
+
     // Check if contact already exists
     const existing = await db
       .select()
@@ -435,7 +447,7 @@ async function getUserPersona(userId: number): Promise<{
     const { chatHistories } = await import("../drizzle/schema");
     const { eq, desc } = await import("drizzle-orm");
     const db = await getDb();
-    
+
     if (!db) {
       console.warn("[Baileys] Cannot fetch persona: database not available");
       return null;
@@ -477,7 +489,7 @@ async function generateAIResponse(
 
     // Build system prompt with persona tone
     let systemPrompt = "You are a helpful AI concierge assistant for a luxury event planning agency.";
-    
+
     if (persona?.toneConfig) {
       const { tone, language, style } = persona.toneConfig;
       systemPrompt += ` Respond in a ${tone || 'professional'} tone`;
@@ -495,7 +507,7 @@ async function generateAIResponse(
     });
 
     const aiMessage = response.choices?.[0]?.message?.content;
-    
+
     if (!aiMessage) {
       console.error("[Baileys] LLM returned no content");
       return null;
