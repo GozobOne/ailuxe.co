@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Send, Bot, User, MessageSquare, Instagram, Linkedin, Twitter } from "lucide-react";
-import { FaWhatsapp, FaTelegram } from "lucide-react";
+import { MessageCircle, Send } from "lucide-react";
 
 interface Message {
   id: string;
